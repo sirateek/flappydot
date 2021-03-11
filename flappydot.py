@@ -50,8 +50,14 @@ class Dot(Sprite):
     def start(self):
         self.is_started = True
 
+    def stop(self):
+        self.is_started = False
+
     def jump(self):
         self.vy = JUMP_VELOCITY
+
+    def is_out_of_screen(self):
+        return self.y > CANVAS_HEIGHT or self.y < 0
 
 
 class FlappyGame(GameApp):
@@ -67,11 +73,21 @@ class FlappyGame(GameApp):
         self.create_sprites()
         self.elements[1].random_height()
         self.is_started = False
+        self.is_gameover = False
 
     def pre_update(self):
         pass
 
     def post_update(self):
+        # Check if the dot is falling out from the screen
+        if self.dot.is_out_of_screen():
+            # Change game state to gameover
+            self.is_started = False
+            self.is_gameover = True
+            # Stop every eliments
+            for element in self.elements:
+                element.stop()
+
         for element in self.elements[1:]:
             if element.is_out_of_screen():
                 element.reset_position()
@@ -79,9 +95,12 @@ class FlappyGame(GameApp):
 
     def on_key_pressed(self, event):
         if event.keysym == "space":
-            if not self.is_started:
+            if not self.is_started and not self.is_gameover:
                 self.is_started = True
                 self.dot.start()
+                return
+            if self.is_gameover:
+                # TODO: Implement the restart game function
                 return
             self.dot.jump()
 
