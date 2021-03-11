@@ -12,7 +12,7 @@ GRAVITY = 2.5
 class PillarPair(Sprite):
     def update(self):
         self.x = self.x-1
-        self.canvas.after(1000, self.update)
+        self.canvas.after(5000, self.update)
 
 
 class Dot(Sprite):
@@ -23,7 +23,6 @@ class FlappyGame(GameApp):
     def create_sprites(self):
         self.dot = Dot(self, 'images/dot.png',
                        CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
-
         self.elements.append(self.dot)
         self.pillar_pair = PillarPair(
             self, 'images/pillar-pair.png', CANVAS_WIDTH, CANVAS_HEIGHT // 2)
