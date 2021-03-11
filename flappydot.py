@@ -12,7 +12,12 @@ GRAVITY = 2.5
 class PillarPair(Sprite):
     def update(self):
         self.x -= 2
-        self.canvas.after(5000, self.update)
+
+    def is_out_of_screen(self):
+        return self.x
+
+    def reset_position(self):
+        self.x = CANVAS_WIDTH
 
 
 class Dot(Sprite):
