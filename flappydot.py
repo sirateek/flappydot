@@ -13,12 +13,6 @@ class PillarPair(Sprite):
     def update(self):
         self.x -= 2
 
-    def is_out_of_screen(self):
-        return self.x
-
-    def reset_position(self):
-        self.x = CANVAS_WIDTH
-
 
 class Dot(Sprite):
     pass
