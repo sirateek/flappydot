@@ -1,5 +1,5 @@
 import tkinter as tk
-
+import random
 from gamelib import Sprite, GameApp, Text
 
 CANVAS_WIDTH = 800
@@ -12,8 +12,29 @@ STARTING_VELOCITY = -30
 
 
 class PillarPair(Sprite):
+    def init_element(self):
+        self.is_started = True
+
+    def start(self):
+        self.is_started = True
+
+    def stop(self):
+        self.is_started = False
+
     def update(self):
-        self.x -= 2
+        if self.is_started:
+            self.x -= 2
+        else:
+            pass
+
+    def is_out_of_screen(self):
+        return self.x < -30
+
+    def reset_position(self):
+        self.x = CANVAS_WIDTH + 30
+
+    def random_height(self):
+        self.y = random.randint(0, CANVAS_HEIGHT)
 
 
 class Dot(Sprite):
@@ -50,6 +71,7 @@ class FlappyGame(GameApp):
 
     def init_game(self):
         self.create_sprites()
+        self.elements[1].random_height()
         self.is_started = False
         self.is_gameover = False
 
@@ -62,9 +84,14 @@ class FlappyGame(GameApp):
             # Change game state to gameover
             self.is_started = False
             self.is_gameover = True
-            # Stop the dot
-            self.dot.stop()
-            # TODO: Stop the pipe
+            # Stop every eliments
+            for element in self.elements:
+                element.stop()
+
+        for element in self.elements[1:]:
+            if element.is_out_of_screen():
+                element.reset_position()
+                element.random_height()
 
     def on_key_pressed(self, event):
         if event.keysym == "space":
