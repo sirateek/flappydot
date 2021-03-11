@@ -1,5 +1,5 @@
 import tkinter as tk
-
+import random
 from gamelib import Sprite, GameApp, Text
 
 CANVAS_WIDTH = 800
@@ -13,7 +13,22 @@ STARTING_VELOCITY = -30
 
 class PillarPair(Sprite):
     def update(self):
-        self.x -= 2
+        if self.is_started == True:
+            self.x -= 2
+        else:
+            pass
+
+    def start(self):
+        self.is_started = True
+
+    def is_out_of_screen(self):
+        return self.x < -30
+
+    def reset_position(self):
+        self.x = CANVAS_WIDTH + 30
+
+    def random_height(self):
+        self.y = random.randint(0, CANVAS_HEIGHT)
 
 
 class Dot(Sprite):
@@ -50,7 +65,10 @@ class FlappyGame(GameApp):
         pass
 
     def post_update(self):
-        pass
+        for element in self.elements[1:]:
+            if element.is_out_of_screen():
+                element.reset_position()
+                element.random_height()
 
     def on_key_pressed(self, event):
         if event.keysym == "space":

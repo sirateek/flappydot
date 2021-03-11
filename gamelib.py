@@ -97,7 +97,6 @@ class GameApp(ttk.Frame):
             element.render()
 
         self.post_update()
-        print(self.post_update())
         self.after(self.update_delay, self.animate)
 
     def start(self):
