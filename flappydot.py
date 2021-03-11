@@ -34,7 +34,8 @@ class PillarPair(Sprite):
         self.x = CANVAS_WIDTH + 30
 
     def random_height(self):
-        self.y = random.randint(0, CANVAS_HEIGHT)
+        self.y = random.randint(0.25*CANVAS_HEIGHT,
+                                CANVAS_HEIGHT-0.25*CANVAS_HEIGHT)
 
 
 class Dot(Sprite):
@@ -69,9 +70,17 @@ class FlappyGame(GameApp):
             self, 'images/pillar-pair.png', CANVAS_WIDTH, CANVAS_HEIGHT // 2)
         self.elements.append(self.pillar_pair)
 
+    def check_pillar_onscreen(self):
+        if len(self.elements[1:]) != 4 and self.elements[-1].x == CANVAS_WIDTH-220:
+            self.pillar_pair = PillarPair(
+                self, 'images/pillar-pair.png', CANVAS_WIDTH, CANVAS_HEIGHT // 2)
+            self.pillar_pair.random_height()
+            self.elements.append(self.pillar_pair)
+
     def init_game(self):
         self.create_sprites()
-        self.elements[1].random_height()
+        for element in self.elements[1:]:
+            element.random_height()
         self.is_started = False
         self.is_gameover = False
 
@@ -87,7 +96,7 @@ class FlappyGame(GameApp):
             # Stop every eliments
             for element in self.elements:
                 element.stop()
-
+        self.check_pillar_onscreen()
         for element in self.elements[1:]:
             if element.is_out_of_screen():
                 element.reset_position()
