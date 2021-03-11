@@ -50,6 +50,7 @@ class FlappyGame(GameApp):
             if not self.is_started:
                 self.is_started = True
                 self.dot.start()
+                return
             self.dot.jump()
 
 
