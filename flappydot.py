@@ -95,9 +95,12 @@ class FlappyGame(GameApp):
 
     def on_key_pressed(self, event):
         if event.keysym == "space":
-            if not self.is_started:
+            if not self.is_started and not self.is_gameover:
                 self.is_started = True
                 self.dot.start()
+                return
+            if self.is_gameover:
+                # TODO: Implement the restart game function
                 return
             self.dot.jump()
 
