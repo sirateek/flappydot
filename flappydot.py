@@ -8,13 +8,15 @@ CANVAS_HEIGHT = 500
 UPDATE_DELAY = 33
 GRAVITY = 2.5
 
+
 class Dot(Sprite):
     pass
 
 
 class FlappyGame(GameApp):
     def create_sprites(self):
-        self.dot = Dot(self, 'images/dot.png', CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
+        self.dot = Dot(self, 'images/dot.png',
+                       CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
 
         self.elements.append(self.dot)
 
@@ -34,7 +36,7 @@ class FlappyGame(GameApp):
 if __name__ == "__main__":
     root = tk.Tk()
     root.title("Monkey Banana Game")
- 
+
     # do not allow window resizing
     root.resizable(False, False)
     app = FlappyGame(root, CANVAS_WIDTH, CANVAS_HEIGHT, UPDATE_DELAY)
