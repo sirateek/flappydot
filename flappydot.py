@@ -10,7 +10,16 @@ GRAVITY = 2.5
 
 
 class Dot(Sprite):
-    pass
+    def init_element(self):
+        self.is_started = False
+
+    def update(self):
+        if self.is_started:
+            self.y += self.vy
+            self.vy += GRAVITY
+
+    def start(self):
+        self.is_started = True
 
 
 class FlappyGame(GameApp):
@@ -22,6 +31,7 @@ class FlappyGame(GameApp):
 
     def init_game(self):
         self.create_sprites()
+        self.is_started = False
 
     def pre_update(self):
         pass
