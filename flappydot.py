@@ -69,6 +69,14 @@ class FlappyGame(GameApp):
             self, 'images/pillar-pair.png', CANVAS_WIDTH, CANVAS_HEIGHT // 2)
         self.elements.append(self.pillar_pair)
 
+    def check_pillar_onscreen(self):
+        if len(self.elements[1:]) != 4:
+            if self.elements[-1].x == CANVAS_WIDTH-220:
+                self.pillar_pair = PillarPair(
+                    self, 'images/pillar-pair.png', CANVAS_WIDTH, CANVAS_HEIGHT // 2)
+                self.elements.append(self.pillar_pair)
+                self.elements[-1].random_height()
+
     def init_game(self):
         self.create_sprites()
         for element in self.elements[1:]:
@@ -88,7 +96,7 @@ class FlappyGame(GameApp):
             # Stop every eliments
             for element in self.elements:
                 element.stop()
-
+        self.check_pillar_onscreen()
         for element in self.elements[1:]:
             if element.is_out_of_screen():
                 element.reset_position()
