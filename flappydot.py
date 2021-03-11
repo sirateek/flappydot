@@ -24,8 +24,14 @@ class Dot(Sprite):
     def start(self):
         self.is_started = True
 
+    def stop(self):
+        self.is_started = False
+
     def jump(self):
         self.vy = JUMP_VELOCITY
+
+    def is_out_of_screen(self):
+        return self.y > CANVAS_HEIGHT or self.y < 0
 
 
 class FlappyGame(GameApp):
@@ -38,12 +44,16 @@ class FlappyGame(GameApp):
     def init_game(self):
         self.create_sprites()
         self.is_started = False
+        self.is_gameover = False
 
     def pre_update(self):
         pass
 
     def post_update(self):
-        pass
+        if self.dot.is_out_of_screen():
+            self.is_started = False
+            self.is_gameover = True
+            self.dot.stop()
 
     def on_key_pressed(self, event):
         if event.keysym == "space":
