@@ -11,8 +11,7 @@ GRAVITY = 2.5
 
 class PillarPair(Sprite):
     def update(self):
-        self.x = self.x-1
-        self.canvas.after(5000, self.update)
+        self.x = self.x-2
 
 
 class Dot(Sprite):
