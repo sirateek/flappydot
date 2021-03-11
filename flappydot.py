@@ -50,8 +50,14 @@ class Dot(Sprite):
     def start(self):
         self.is_started = True
 
+    def stop(self):
+        self.is_started = False
+
     def jump(self):
         self.vy = JUMP_VELOCITY
+
+    def is_out_of_screen(self):
+        return self.y > CANVAS_HEIGHT or self.y < 0
 
 
 class FlappyGame(GameApp):
@@ -62,26 +68,27 @@ class FlappyGame(GameApp):
         self.pillar_pair = PillarPair(
             self, 'images/pillar-pair.png', CANVAS_WIDTH, CANVAS_HEIGHT // 2)
         self.elements.append(self.pillar_pair)
-        self.pillar_pair = PillarPair(
-            self, 'images/pillar-pair.png', CANVAS_WIDTH, CANVAS_HEIGHT // 2)
-        self.elements.append(self.pillar_pair)
-        self.pillar_pair = PillarPair(
-            self, 'images/pillar-pair.png', CANVAS_WIDTH, CANVAS_HEIGHT // 2)
-        self.elements.append(self.pillar_pair)
-        self.pillar_pair = PillarPair(
-            self, 'images/pillar-pair.png', CANVAS_WIDTH, CANVAS_HEIGHT // 2)
-        self.elements.append(self.pillar_pair)
 
     def init_game(self):
         self.create_sprites()
         for element in self.elements[1:]:
             element.random_height()
         self.is_started = False
+        self.is_gameover = False
 
     def pre_update(self):
         pass
 
     def post_update(self):
+        # Check if the dot is falling out from the screen
+        if self.dot.is_out_of_screen():
+            # Change game state to gameover
+            self.is_started = False
+            self.is_gameover = True
+            # Stop every eliments
+            for element in self.elements:
+                element.stop()
+
         for element in self.elements[1:]:
             if element.is_out_of_screen():
                 element.reset_position()
