@@ -57,10 +57,14 @@ class FlappyGame(GameApp):
         pass
 
     def post_update(self):
+        # Check if the dot is falling out from the screen
         if self.dot.is_out_of_screen():
+            # Change game state to gameover
             self.is_started = False
             self.is_gameover = True
+            # Stop the dot
             self.dot.stop()
+            # TODO: Stop the pipe
 
     def on_key_pressed(self, event):
         if event.keysym == "space":
