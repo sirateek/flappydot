@@ -34,7 +34,8 @@ class PillarPair(Sprite):
         self.x = CANVAS_WIDTH + 30
 
     def random_height(self):
-        self.y = random.randint(120, CANVAS_HEIGHT-120)
+        self.y = random.randint((25/100)*CANVAS_HEIGHT,
+                                CANVAS_HEIGHT-(25/100)*CANVAS_HEIGHT)
 
 
 class Dot(Sprite):
