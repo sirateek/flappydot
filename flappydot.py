@@ -37,6 +37,14 @@ class PillarPair(Sprite):
         self.y = random.randint(0.25*CANVAS_HEIGHT,
                                 CANVAS_HEIGHT-0.25*CANVAS_HEIGHT)
 
+    def is_hit(self, dot):
+        assert type(
+            dot) == Dot, "The dot param must be the instance of Dot object"
+        if dot.x + 20 >= self.x - 40 and dot.x + 20 <= self.x + 40:
+            if dot.y + 20 < self.y - 100 or dot.y - 20 < self.y - 100 or dot.y + 20 > self.y + 100 or dot.y - 20 > self.y + 100:
+                return True
+        return False
+
 
 class Dot(Sprite):
     def init_element(self):
@@ -94,10 +102,18 @@ class FlappyGame(GameApp):
             self.is_started = False
             self.is_gameover = True
             # Stop every eliments
-            for element in self.elements:
+            for element in self.elements[1:]:
                 element.stop()
         self.check_pillar_onscreen()
-        for element in self.elements[1:]:
+        for index, element in enumerate(self.elements[1:]):
+            is_hit = element.is_hit(self.dot)
+            print("Pipe " + str(index) + " Collision: " +
+                  str(element.is_hit(self.dot)))
+            # TODO: Turn the die mechanism on again before merge
+            # if is_hit:
+            #     self.is_gameover = True
+            #     self.is_started = False
+            #     print("Gameover")
             if element.is_out_of_screen():
                 element.reset_position()
                 element.random_height()
