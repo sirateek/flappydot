@@ -19,7 +19,7 @@ class PillarPair(Sprite):
         self.is_started = True
 
     def update(self):
-        if self.is_started == True:
+        if self.is_started:
             self.x -= 2
         else:
             pass
