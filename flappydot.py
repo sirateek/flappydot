@@ -33,12 +33,6 @@ class PillarPair(Sprite):
     def random_height(self):
         self.y = random.randint(0, CANVAS_HEIGHT)
 
-    def is_out_of_screen(self):
-        return self.x < -30
-
-    def reset_position(self):
-        self.x = CANVAS_WIDTH
-
 
 class Dot(Sprite):
     def init_element(self):
