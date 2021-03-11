@@ -12,14 +12,17 @@ STARTING_VELOCITY = -30
 
 
 class PillarPair(Sprite):
+    def init_element(self):
+        self.is_started = True
+
+    def start(self):
+        self.is_started = True
+
     def update(self):
         if self.is_started == True:
             self.x -= 2
         else:
             pass
-
-    def start(self):
-        self.is_started = True
 
     def is_out_of_screen(self):
         return self.x < -30
