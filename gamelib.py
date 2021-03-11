@@ -110,7 +110,7 @@ class GameApp(ttk.Frame):
         pass
 
     def post_update(self):
-        return "hi"
+        pass
 
     def on_key_pressed(self, event):
         pass
