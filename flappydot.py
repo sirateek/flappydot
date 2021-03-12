@@ -110,10 +110,9 @@ class FlappyGame(GameApp):
                 self.dot.start()
                 return
             if self.is_gameover:
-                # TODO: Implement the restart game function
-                for _ in range(len(self.elements)):
-                    self.canvas.delete(self.elements[0].canvas_object_id)
-                    self.elements.pop(0)
+                for item in self.elements:
+                    self.canvas.delete(item.canvas_object_id)
+                self.elements = []
                 self.init_game()
                 self.is_gameover = False
                 return
