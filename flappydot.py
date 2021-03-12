@@ -108,7 +108,7 @@ class FlappyGame(GameApp):
             for element in self.elements[1:]:
                 element.stop()
         self.check_pillar_onscreen()
-        for index, element in enumerate(self.elements[1:]):
+        for element in self.elements[1:]:
             if element.is_hit(self.dot):
                 self.is_gameover = True
                 self.is_started = False
