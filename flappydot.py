@@ -12,12 +12,13 @@ STARTING_VELOCITY = -30
 
 # > Development Feature <
 DEV_ENV = False
-DEATH_MECHANISM = True
+DEATH_MECHANISM = False
 
 
 class PillarPair(Sprite):
     def init_element(self):
         self.is_started = True
+        self.speed = 1
 
     def start(self):
         self.is_started = True
@@ -27,7 +28,7 @@ class PillarPair(Sprite):
 
     def update(self):
         if self.is_started:
-            self.x -= 2
+            self.x -= 10
 
     def is_out_of_screen(self):
         return self.x < -(0.05*CANVAS_WIDTH)
@@ -94,7 +95,7 @@ class FlappyGame(GameApp):
         self.elements.append(self.pillar_pair)
 
     def check_pillar_onscreen(self):
-        if len(self.elements[1:]) != 4 and self.elements[-1].x == CANVAS_WIDTH-0.275*CANVAS_WIDTH+0.05*CANVAS_WIDTH:
+        if len(self.elements) > 1 and len(self.elements[1:]) != 4 and self.elements[-1].x <= CANVAS_WIDTH-0.275*CANVAS_WIDTH+0.05*CANVAS_WIDTH:
             self.create_pillar()
 
     def init_game(self):
