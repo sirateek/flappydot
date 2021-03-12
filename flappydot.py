@@ -66,16 +66,16 @@ class FlappyGame(GameApp):
         self.dot = Dot(self, 'images/dot.png',
                        CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
         self.elements.append(self.dot)
+
+    def create_pillar(self):
         self.pillar_pair = PillarPair(
             self, 'images/pillar-pair.png', CANVAS_WIDTH, CANVAS_HEIGHT // 2)
+        self.pillar_pair.random_height()
         self.elements.append(self.pillar_pair)
 
     def check_pillar_onscreen(self):
-        if len(self.elements[1:]) != 4 and self.elements[-1].x == CANVAS_WIDTH-220:
-            self.pillar_pair = PillarPair(
-                self, 'images/pillar-pair.png', CANVAS_WIDTH, CANVAS_HEIGHT // 2)
-            self.pillar_pair.random_height()
-            self.elements.append(self.pillar_pair)
+        if len(self.elements[1:]) != 4 and self.elements[-1].x == CANVAS_WIDTH-0.275*CANVAS_WIDTH:
+            self.create_pillar()
 
     def init_game(self):
         self.create_sprites()
@@ -105,11 +105,16 @@ class FlappyGame(GameApp):
     def on_key_pressed(self, event):
         if event.keysym == "space":
             if not self.is_started and not self.is_gameover:
+                self.create_pillar()
                 self.is_started = True
                 self.dot.start()
                 return
             if self.is_gameover:
-                # TODO: Implement the restart game function
+                for item in self.elements:
+                    self.canvas.delete(item.canvas_object_id)
+                self.elements = []
+                self.init_game()
+                self.is_gameover = False
                 return
             self.dot.jump()
 
