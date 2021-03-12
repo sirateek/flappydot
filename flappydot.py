@@ -124,13 +124,17 @@ class FlappyGame(GameApp):
                 self.dot.start()
                 return
             if self.is_gameover:
-                for item in self.elements:
-                    self.canvas.delete(item.canvas_object_id)
-                self.elements = []
-                self.init_game()
-                self.is_gameover = False
                 return
             self.dot.jump()
+
+        if event.keysym == "r" and self.is_gameover:
+            # R button press to reset game when gameover.
+            for item in self.elements:
+                self.canvas.delete(item.canvas_object_id)
+            self.elements = []
+            self.init_game()
+            self.is_gameover = False
+            return
 
 
 if __name__ == "__main__":
