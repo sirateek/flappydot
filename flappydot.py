@@ -1,6 +1,8 @@
+from gamelib import Sprite, GameApp, Text
+from PIL import Image, ImageTk
 import tkinter as tk
 import random
-from gamelib import Sprite, GameApp, Text
+
 
 CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 500
@@ -55,15 +57,34 @@ class Dot(Sprite):
     def init_element(self):
         self.vy = STARTING_VELOCITY
         self.is_started = False
+        self.facing_angle = 0
         if DEV_ENV:
             self.hit_box = self.canvas.create_rectangle(
                 self.x - 20, self.y - 20, self.x + 20, self.y+20,
                 width=1, dash=(4, 2))
 
+    def init_canvas_object(self):
+
+        self.image = Image.open(self.image_filename)
+        self.image = self.image.rotate(0)
+        self.tk_image = ImageTk.PhotoImage(self.image)
+        self.canvas_object_id = self.canvas.create_image(
+            self.x,
+            self.y,
+            image=self.tk_image)
+
     def update(self):
         if self.is_started:
             self.y += self.vy
             self.vy += GRAVITY
+            self.facing_angle -= 6
+            self.canvas.delete(self.canvas_object_id)
+            self.tk_image = ImageTk.PhotoImage(
+                self.image.rotate(self.facing_angle))
+            self.canvas_object_id = self.canvas.create_image(
+                self.x,
+                self.y,
+                image=self.tk_image)
             if DEV_ENV:
                 self.canvas.coords(self.hit_box, self.x - 20,
                                    self.y - 20, self.x + 20, self.y+20)
@@ -75,6 +96,7 @@ class Dot(Sprite):
         self.is_started = False
 
     def jump(self):
+        self.facing_angle = 40
         self.vy = JUMP_VELOCITY
 
     def is_out_of_screen(self):
