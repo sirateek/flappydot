@@ -12,7 +12,7 @@ STARTING_VELOCITY = -30
 
 # > Development Feature <
 DEV_ENV = False
-DEATH_MECHANISM = False
+DEATH_MECHANISM = True
 
 
 class PillarPair(Sprite):
