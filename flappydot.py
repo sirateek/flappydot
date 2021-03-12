@@ -11,11 +11,11 @@ UPDATE_DELAY = 33
 GRAVITY = 0.7
 JUMP_VELOCITY = -10
 STARTING_VELOCITY = -10
+SPEED = 5
 
 # > Development Feature <
 DEV_ENV = False
 DEATH_MECHANISM = False
-SPEED = 5
 
 
 class PillarPair(Sprite):
@@ -148,6 +148,11 @@ class FlappyGame(GameApp):
     def start(self):
         self.update_pipe()
         self.update_bird()
+
+    def animate(self):
+        # animate method has been deprecated. Dut to the animation shaking issue
+        # Using update_bird() and update_pipe to update element instead
+        pass
 
     def post_update(self):
         # Check if the dot is falling out from the screen
