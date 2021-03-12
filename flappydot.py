@@ -24,8 +24,6 @@ class PillarPair(Sprite):
     def update(self):
         if self.is_started:
             self.x -= 2
-        else:
-            pass
 
     def is_out_of_screen(self):
         return self.x < -30
@@ -53,11 +51,18 @@ class Dot(Sprite):
     def init_element(self):
         self.vy = STARTING_VELOCITY
         self.is_started = False
+        # TODO: Remove hit_box before merge!
+        self.hit_box = self.canvas.create_rectangle(
+            self.x - 20, self.y - 20, self.x + 20, self.y+20,
+            width=1, dash=(4, 2))
 
     def update(self):
         if self.is_started:
             self.y += self.vy
             self.vy += GRAVITY
+            # TODO: Remove hit_box before merge!
+            self.canvas.coords(self.hit_box, self.x - 20, self.y - 20, self.x + 20, self.y+20)
+            
 
     def start(self):
         self.is_started = True
@@ -110,8 +115,13 @@ class FlappyGame(GameApp):
         self.check_pillar_onscreen()
         for element in self.elements[1:]:
             if element.is_hit(self.dot):
+                # TODO: Remove this line before merge!
+                self.dot.stop()
                 self.is_gameover = True
                 self.is_started = False
+                # TODO: Remove these line before
+                for element in self.elements[1:]:
+                    element.stop()
             if element.is_out_of_screen():
                 element.reset_position()
                 element.random_height()
