@@ -26,10 +26,10 @@ class PillarPair(Sprite):
             self.x -= 2
 
     def is_out_of_screen(self):
-        return self.x < -30
+        return self.x < -(0.05*CANVAS_WIDTH)
 
     def reset_position(self):
-        self.x = CANVAS_WIDTH + 30
+        self.x = CANVAS_WIDTH + 0.05*(CANVAS_WIDTH)
 
     def random_height(self):
         self.y = random.randint(0.25*CANVAS_HEIGHT,
@@ -61,8 +61,8 @@ class Dot(Sprite):
             self.y += self.vy
             self.vy += GRAVITY
             # TODO: Remove hit_box before merge!
-            self.canvas.coords(self.hit_box, self.x - 20, self.y - 20, self.x + 20, self.y+20)
-            
+            self.canvas.coords(self.hit_box, self.x - 20,
+                               self.y - 20, self.x + 20, self.y+20)
 
     def start(self):
         self.is_started = True
@@ -85,12 +85,12 @@ class FlappyGame(GameApp):
 
     def create_pillar(self):
         self.pillar_pair = PillarPair(
-            self, 'images/pillar-pair.png', CANVAS_WIDTH, CANVAS_HEIGHT // 2)
+            self, 'images/pillar-pair.png', CANVAS_WIDTH+0.05*CANVAS_WIDTH, CANVAS_HEIGHT // 2)
         self.pillar_pair.random_height()
         self.elements.append(self.pillar_pair)
 
     def check_pillar_onscreen(self):
-        if len(self.elements[1:]) != 4 and self.elements[-1].x == CANVAS_WIDTH-0.275*CANVAS_WIDTH:
+        if len(self.elements[1:]) != 4 and self.elements[-1].x == CANVAS_WIDTH-0.275*CANVAS_WIDTH+0.05*CANVAS_WIDTH:
             self.create_pillar()
 
     def init_game(self):
