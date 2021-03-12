@@ -10,6 +10,10 @@ GRAVITY = 2.5
 JUMP_VELOCITY = -20
 STARTING_VELOCITY = -30
 
+# > Development Feature <
+DEV_ENV = False
+DEATH_MECHANISM = False
+
 
 class PillarPair(Sprite):
     def init_element(self):
@@ -44,25 +48,25 @@ class PillarPair(Sprite):
 
         return (dot_x_front >= self.x - 40 and dot_x_front <= self.x + 40) and \
             (dot_y_top < self.y - 100 or dot_y_top > self.y +
-             100 or dot_y_top < self.y - 100 or dot_y_bottom > self.y + 100)
+             100 or dot_y_bottom < self.y - 100 or dot_y_bottom > self.y + 100)
 
 
 class Dot(Sprite):
     def init_element(self):
         self.vy = STARTING_VELOCITY
         self.is_started = False
-        # TODO: Remove hit_box before merge!
-        self.hit_box = self.canvas.create_rectangle(
-            self.x - 20, self.y - 20, self.x + 20, self.y+20,
-            width=1, dash=(4, 2))
+        if DEV_ENV:
+            self.hit_box = self.canvas.create_rectangle(
+                self.x - 20, self.y - 20, self.x + 20, self.y+20,
+                width=1, dash=(4, 2))
 
     def update(self):
         if self.is_started:
             self.y += self.vy
             self.vy += GRAVITY
-            # TODO: Remove hit_box before merge!
-            self.canvas.coords(self.hit_box, self.x - 20,
-                               self.y - 20, self.x + 20, self.y+20)
+            if DEV_ENV:
+                self.canvas.coords(self.hit_box, self.x - 20,
+                                   self.y - 20, self.x + 20, self.y+20)
 
     def start(self):
         self.is_started = True
@@ -105,7 +109,7 @@ class FlappyGame(GameApp):
 
     def post_update(self):
         # Check if the dot is falling out from the screen
-        if self.dot.is_out_of_screen():
+        if self.dot.is_out_of_screen() and DEATH_MECHANISM:
             # Change game state to gameover
             self.is_started = False
             self.is_gameover = True
@@ -114,14 +118,9 @@ class FlappyGame(GameApp):
                 element.stop()
         self.check_pillar_onscreen()
         for element in self.elements[1:]:
-            if element.is_hit(self.dot):
-                # TODO: Remove this line before merge!
-                self.dot.stop()
+            if element.is_hit(self.dot) and DEATH_MECHANISM:
                 self.is_gameover = True
                 self.is_started = False
-                # TODO: Remove these line before
-                for element in self.elements[1:]:
-                    element.stop()
             if element.is_out_of_screen():
                 element.reset_position()
                 element.random_height()
