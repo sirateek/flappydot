@@ -14,8 +14,8 @@ STARTING_VELOCITY = -10
 
 # > Development Feature <
 DEV_ENV = False
-DEATH_MECHANISM = True
-SPEED = 1
+DEATH_MECHANISM = False
+SPEED = 5
 
 
 class PillarPair(Sprite):
@@ -76,10 +76,10 @@ class Dot(Sprite):
             image=self.tk_image)
 
     def update(self):
-        if self.is_started:
+        if self.is_started and self.y <= CANVAS_HEIGHT - 20:
             self.y += self.vy
             self.vy += GRAVITY
-            self.facing_angle -= 6
+            self.facing_angle -= 4
             self.canvas.delete(self.canvas_object_id)
             self.tk_image = ImageTk.PhotoImage(
                 self.image.rotate(self.facing_angle))
@@ -127,6 +127,7 @@ class FlappyGame(GameApp):
             element.random_height()
         self.is_started = False
         self.is_gameover = False
+        self.update_pipe()
 
     def update_pipe(self):
         global SPEED
@@ -139,11 +140,10 @@ class FlappyGame(GameApp):
             self.after(SPEED, self.update_pipe)
 
     def update_bird(self):
-        if self.is_started:
+        if self.is_started or self.is_gameover:
             self.dot.update()
             self.dot.render()
-        if not self.is_gameover:
-            self.after(10, self.update_bird)
+        self.after(10, self.update_bird)
 
     def start(self):
         self.update_pipe()
