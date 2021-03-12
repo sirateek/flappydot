@@ -6,13 +6,14 @@ CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 500
 
 UPDATE_DELAY = 33
-GRAVITY = 2.5
-JUMP_VELOCITY = -20
-STARTING_VELOCITY = -30
+GRAVITY = 0.7
+JUMP_VELOCITY = -10
+STARTING_VELOCITY = -10
 
 # > Development Feature <
 DEV_ENV = False
-DEATH_MECHANISM = False
+DEATH_MECHANISM = True
+SPEED = 1
 
 
 class PillarPair(Sprite):
@@ -28,7 +29,7 @@ class PillarPair(Sprite):
 
     def update(self):
         if self.is_started:
-            self.x -= 10
+            self.x -= 1
 
     def is_out_of_screen(self):
         return self.x < -(0.05*CANVAS_WIDTH)
@@ -105,8 +106,26 @@ class FlappyGame(GameApp):
         self.is_started = False
         self.is_gameover = False
 
-    def pre_update(self):
-        pass
+    def update_pipe(self):
+        global SPEED
+        if self.is_started:
+            for element in self.elements[1:]:
+                element.update()
+                element.render()
+            self.post_update()
+        if not self.is_gameover:
+            self.after(SPEED, self.update_pipe)
+
+    def update_bird(self):
+        if self.is_started:
+            self.dot.update()
+            self.dot.render()
+        if not self.is_gameover:
+            self.after(10, self.update_bird)
+
+    def start(self):
+        self.update_pipe()
+        self.update_bird()
 
     def post_update(self):
         # Check if the dot is falling out from the screen
