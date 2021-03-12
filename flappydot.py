@@ -10,6 +10,10 @@ GRAVITY = 2.5
 JUMP_VELOCITY = -20
 STARTING_VELOCITY = -30
 
+# > Development Feature <
+DEV_ENV = False
+DEATH_MECHANISM = False
+
 
 class PillarPair(Sprite):
     def init_element(self):
@@ -24,8 +28,6 @@ class PillarPair(Sprite):
     def update(self):
         if self.is_started:
             self.x -= 2
-        else:
-            pass
 
     def is_out_of_screen(self):
         return self.x < -(0.05*CANVAS_WIDTH)
@@ -37,16 +39,34 @@ class PillarPair(Sprite):
         self.y = random.randint(0.25*CANVAS_HEIGHT,
                                 CANVAS_HEIGHT-0.25*CANVAS_HEIGHT)
 
+    def is_hit(self, dot):
+        assert type(
+            dot) == Dot, "The dot param must be the instance of Dot object"
+        dot_x_front = dot.x + 20
+        dot_y_top = dot.y + 20
+        dot_y_bottom = dot.y - 20
+
+        return (dot_x_front >= self.x - 40 and dot_x_front <= self.x + 40) and \
+            (dot_y_top < self.y - 100 or dot_y_top > self.y +
+             100 or dot_y_bottom < self.y - 100 or dot_y_bottom > self.y + 100)
+
 
 class Dot(Sprite):
     def init_element(self):
         self.vy = STARTING_VELOCITY
         self.is_started = False
+        if DEV_ENV:
+            self.hit_box = self.canvas.create_rectangle(
+                self.x - 20, self.y - 20, self.x + 20, self.y+20,
+                width=1, dash=(4, 2))
 
     def update(self):
         if self.is_started:
             self.y += self.vy
             self.vy += GRAVITY
+            if DEV_ENV:
+                self.canvas.coords(self.hit_box, self.x - 20,
+                                   self.y - 20, self.x + 20, self.y+20)
 
     def start(self):
         self.is_started = True
@@ -89,15 +109,18 @@ class FlappyGame(GameApp):
 
     def post_update(self):
         # Check if the dot is falling out from the screen
-        if self.dot.is_out_of_screen():
+        if self.dot.is_out_of_screen() and DEATH_MECHANISM:
             # Change game state to gameover
             self.is_started = False
             self.is_gameover = True
             # Stop every eliments
-            for element in self.elements:
+            for element in self.elements[1:]:
                 element.stop()
         self.check_pillar_onscreen()
         for element in self.elements[1:]:
+            if element.is_hit(self.dot) and DEATH_MECHANISM:
+                self.is_gameover = True
+                self.is_started = False
             if element.is_out_of_screen():
                 element.reset_position()
                 element.random_height()
@@ -110,13 +133,17 @@ class FlappyGame(GameApp):
                 self.dot.start()
                 return
             if self.is_gameover:
-                for item in self.elements:
-                    self.canvas.delete(item.canvas_object_id)
-                self.elements = []
-                self.init_game()
-                self.is_gameover = False
                 return
             self.dot.jump()
+
+        if event.keysym == "r" and self.is_gameover:
+            # R button press to reset game when gameover.
+            for item in self.elements:
+                self.canvas.delete(item.canvas_object_id)
+            self.elements = []
+            self.init_game()
+            self.is_gameover = False
+            return
 
 
 if __name__ == "__main__":
