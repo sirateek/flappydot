@@ -113,7 +113,9 @@ class Intro(Sprite):
 class FlappyGame(GameApp):
     def intro_image(self):
         self.intro_list = self.image_name = ["intro1", "intro2", "intro3", "intro4", "intro5", "intro6", "intro7", "intro8", "intro9", "intro10",
-                                             "intro11", "intro12", "intro13", "intro14", "intro15", "intro16", "intro17", "intro18", "intro19", "intro20", "intro21", "intro22", "intro23", "intro24", "intro25", "intro26", "intro27", "intro28", "intro29", "intro30", "intro31"]
+                                             "intro11", "intro12", "intro13", "intro14", "intro15", "intro16", "intro17",
+                                             "intro18", "intro19", "intro20", "intro21", "intro22", "intro23", "intro24",
+                                             "intro25", "intro26", "intro27", "intro28", "intro29", "intro30", "intro31"]
 
     def move_out(self):
         self.intro.y += 3
