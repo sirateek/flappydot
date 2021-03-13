@@ -15,7 +15,7 @@ SPEED = 5
 
 # > Development Feature <
 DEV_ENV = False
-DEATH_MECHANISM = False
+DEATH_MECHANISM = True
 
 
 class PillarPair(Sprite):
@@ -102,7 +102,7 @@ class Dot(Sprite):
         self.vy = JUMP_VELOCITY
 
     def is_out_of_screen(self):
-        return self.y > CANVAS_HEIGHT or self.y < 0
+        return self.y > CANVAS_HEIGHT-10 or self.y < 0
 
 
 class FlappyGame(GameApp):
