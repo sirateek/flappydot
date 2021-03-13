@@ -68,7 +68,7 @@ class GameApp(ttk.Frame):
     def __init__(self, parent, canvas_width=800, canvas_height=500, update_delay=2):
         super().__init__(parent)
         self.parent = parent
-
+        self.intro_Done = False
         self.canvas_width = canvas_width
         self.canvas_height = canvas_height
 

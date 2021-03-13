@@ -11,7 +11,7 @@ UPDATE_DELAY = 33
 GRAVITY = 0.7
 JUMP_VELOCITY = -10
 STARTING_VELOCITY = -10
-SPEED = 5
+SPEED = 4
 
 # > Development Feature <
 DEV_ENV = False
@@ -103,7 +103,7 @@ class Dot(Sprite):
         self.vy = JUMP_VELOCITY
 
     def is_out_of_screen(self):
-        return self.y > CANVAS_HEIGHT-10 or self.y < 0
+        return self.y > CANVAS_HEIGHT-20 or self.y < 0
 
 
 class Intro(Sprite):
@@ -119,15 +119,15 @@ class FlappyGame(GameApp):
         self.intro.y += 3
         self.intro.render()
         self.after(30, self.move_out)
+        self.intro_Done = True
 
     def create_intro(self, item):
         if item > 30:
-            self.move_out()
             return
         image_name = "images/"+self.intro_list[item]+".png"
         self.intro = Intro(self, image_name, CANVAS_WIDTH //
                            2, CANVAS_HEIGHT // 2)
-        self.after(1, lambda: self.create_intro(item+1))
+        self.after(SPEED, lambda: self.create_intro(item+1))
 
     def running_intro(self):
         self.intro_image()
@@ -153,12 +153,14 @@ class FlappyGame(GameApp):
             self.create_pillar()
 
     def init_game(self):
-        self.running_intro()
+
         self.create_sprites()
         for element in self.elements[1:]:
             element.random_height()
         self.is_started = False
         self.is_gameover = False
+        if self.intro_Done == False:
+            self.running_intro()
         self.update_pipe()
 
     def update_pipe(self):
@@ -208,14 +210,17 @@ class FlappyGame(GameApp):
 
     def on_key_pressed(self, event):
         if event.keysym == "space":
-            if not self.is_started and not self.is_gameover:
-                self.create_pillar()
+            if self.intro_Done == False:
+                self.move_out()
+            if not self.is_started and not self.is_gameover and self.intro_Done == True:
                 self.is_started = True
+                self.create_pillar()
                 self.dot.start()
                 return
             if self.is_gameover:
                 return
-            self.dot.jump()
+            if self.intro_Done == True:
+                self.dot.jump()
 
         if event.keysym == "r" and self.is_gameover:
             self.canvas.delete(self.lose.canvas_object_id)
