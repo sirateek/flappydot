@@ -55,6 +55,7 @@ class PillarPair(Sprite):
 
 class Dot(Sprite):
     def init_element(self):
+
         self.vy = STARTING_VELOCITY
         self.is_started = False
         self.facing_angle = 0
@@ -103,7 +104,29 @@ class Dot(Sprite):
         return self.y > CANVAS_HEIGHT or self.y < 0
 
 
+class Intre(Sprite):
+    def init_element(self):
+        self.image = ["intro1", "intro2", "intro3", "intro4", "intro5", "intro6", "intro7", "intro8", "intro9", "intro10",
+                      "intro11", "intro12", "intro13", "intro14", "intro15", "intro16", "intro17", "intro18", "intro19", "intro20", "intro21", "intro22", "intro23", "intro24", "intro25", "intro26", "intro27", "intro28", "intro29", "intro30", "intro31", ]
+
+    def running_intro(self, item):
+        if item > 31:
+            self.canvas.delete(self.canvas_object_id)
+            return
+        self.image_filename = "image/"+self.image[item]
+        self.photo_image = tk.PhotoImage(file=self.image_filename)
+        self.canvas_object_id = self.canvas.create_image(
+            self.x,
+            self.y,
+            image=self.photo_image)
+        self.parent.after(500, lambda x: self.running_intro(item+1))
+
+    def init_canvas_object(self):
+        self.running_intro(0)
+
+
 class FlappyGame(GameApp):
+
     def create_sprites(self):
         self.dot = Dot(self, 'images/dot.png',
                        CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
