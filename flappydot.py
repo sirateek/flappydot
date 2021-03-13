@@ -15,7 +15,7 @@ SPEED = 5
 
 # > Development Feature <
 DEV_ENV = False
-DEATH_MECHANISM = False
+DEATH_MECHANISM = True
 
 
 class PillarPair(Sprite):
@@ -127,11 +127,15 @@ class FlappyGame(GameApp):
         image_name = "images/"+self.intro_list[item]+".png"
         self.intro = Intro(self, image_name, CANVAS_WIDTH //
                            2, CANVAS_HEIGHT // 2)
-        self.after(15, lambda: self.create_intro(item+1))
+        self.after(1, lambda: self.create_intro(item+1))
 
     def running_intro(self):
         self.intro_image()
         self.create_intro(0)
+
+    def create_you_lost(self):
+        self.lose = Intro(self, 'images/you-lose.png', CANVAS_WIDTH //
+                          2, CANVAS_HEIGHT // 2)
 
     def create_sprites(self):
         self.dot = Dot(self, 'images/dot.png',
@@ -188,6 +192,7 @@ class FlappyGame(GameApp):
             # Change game state to gameover
             self.is_started = False
             self.is_gameover = True
+            self.create_you_lost()
             # Stop every eliments
             for element in self.elements[1:]:
                 element.stop()
@@ -196,6 +201,7 @@ class FlappyGame(GameApp):
             if element.is_hit(self.dot) and DEATH_MECHANISM:
                 self.is_gameover = True
                 self.is_started = False
+                self.create_you_lost()
             if element.is_out_of_screen():
                 element.reset_position()
                 element.random_height()
@@ -212,6 +218,7 @@ class FlappyGame(GameApp):
             self.dot.jump()
 
         if event.keysym == "r" and self.is_gameover:
+            self.canvas.delete(self.lose.canvas_object_id)
             # R button press to reset game when gameover.
             for item in self.elements:
                 self.canvas.delete(item.canvas_object_id)
