@@ -161,7 +161,7 @@ class FlappyGame(GameApp):
             element.random_height()
         self.is_started = False
         self.is_gameover = False
-        if self.intro_Done == False:
+        if not self.intro_Done:
             self.running_intro()
         self.update_pipe()
 
@@ -212,16 +212,16 @@ class FlappyGame(GameApp):
 
     def on_key_pressed(self, event):
         if event.keysym == "space":
-            if self.intro_Done == False:
+            if not self.intro_Done:
                 self.move_out()
-            if not self.is_started and not self.is_gameover and self.intro_Done == True:
+            if not self.is_started and not self.is_gameover and self.intro_Done:
                 self.is_started = True
                 self.create_pillar()
                 self.dot.start()
                 return
             if self.is_gameover:
                 return
-            if self.intro_Done == True:
+            if self.intro_Done:
                 self.dot.jump()
 
         if event.keysym == "r" and self.is_gameover:
