@@ -29,7 +29,7 @@ class PillarPair(Sprite):
 
     def update(self):
         if self.is_started:
-            self.x -= 2
+            self.x -= 5
 
     def is_out_of_screen(self):
         return self.x < -(0.05*CANVAS_WIDTH)
@@ -40,6 +40,10 @@ class PillarPair(Sprite):
     def random_height(self):
         self.y = random.randint(0.25*CANVAS_HEIGHT,
                                 CANVAS_HEIGHT-0.25*CANVAS_HEIGHT)
+
+    def dot_passed(self):
+        if self.x == CANVAS_WIDTH//2:
+            return True
 
     def is_hit(self, dot):
         assert type(
@@ -103,7 +107,14 @@ class Dot(Sprite):
         return self.y > CANVAS_HEIGHT or self.y < 0
 
 
+class TextImage(Sprite):
+    pass
+
+
 class FlappyGame(GameApp):
+    def count_score(self):
+        self.score += 1
+
     def create_sprites(self):
         self.dot = Dot(self, 'images/dot.png',
                        CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
@@ -119,12 +130,29 @@ class FlappyGame(GameApp):
         if len(self.elements[1:]) != 4 and self.elements[-1].x == CANVAS_WIDTH-0.275*CANVAS_WIDTH+0.05*CANVAS_WIDTH:
             self.create_pillar()
 
+    def displayed_score(self):
+        if self.score < 10:
+            image_name = 'images/number/'+self.score_image[self.score]+'.png'
+            self.score_display0 = TextImage(
+                self, image_name, CANVAS_WIDTH//2, CANVAS_HEIGHT*0.1)
+        elif self.score < 100:
+            score_split = list(str(self.score))
+            image_name0 = 'images/number/' + \
+                self.score_image[int(score_split[1])]+'.png'
+            image_name00 = 'images/number/' + \
+                self.score_image[int(score_split[0])]+'.png'
+            self.score_display0 = TextImage(
+                self, image_name0, CANVAS_WIDTH//2+40, CANVAS_HEIGHT*0.1)
+            self.score_display00 = TextImage(
+                self, image_name00, CANVAS_WIDTH//2-40, CANVAS_HEIGHT*0.1)
+
     def init_game(self):
         self.create_sprites()
         for element in self.elements[1:]:
             element.random_height()
         self.is_started = False
         self.is_gameover = False
+        self.score = 0
 
     def pre_update(self):
         pass
@@ -139,10 +167,13 @@ class FlappyGame(GameApp):
             for element in self.elements[1:]:
                 element.stop()
         self.check_pillar_onscreen()
+        self.displayed_score()
         for element in self.elements[1:]:
             if element.is_hit(self.dot) and DEATH_MECHANISM:
                 self.is_gameover = True
                 self.is_started = False
+            if element.dot_passed():
+                self.score += 1
             if element.is_out_of_screen():
                 element.reset_position()
                 element.random_height()
