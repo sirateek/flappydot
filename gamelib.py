@@ -65,7 +65,7 @@ class Sprite(GameCanvasElement):
 
 
 class GameApp(ttk.Frame):
-    def __init__(self, parent, canvas_width=800, canvas_height=500, update_delay=33):
+    def __init__(self, parent, canvas_width=800, canvas_height=500, update_delay=2):
         super().__init__(parent)
         self.parent = parent
 

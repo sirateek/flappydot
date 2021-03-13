@@ -8,18 +8,20 @@ CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 500
 
 UPDATE_DELAY = 33
-GRAVITY = 2.5
-JUMP_VELOCITY = -20
-STARTING_VELOCITY = -30
+GRAVITY = 0.7
+JUMP_VELOCITY = -10
+STARTING_VELOCITY = -10
+SPEED = 5
 
 # > Development Feature <
 DEV_ENV = False
-DEATH_MECHANISM = True
+DEATH_MECHANISM = False
 
 
 class PillarPair(Sprite):
     def init_element(self):
         self.is_started = True
+        self.speed = 1
 
     def start(self):
         self.is_started = True
@@ -29,7 +31,7 @@ class PillarPair(Sprite):
 
     def update(self):
         if self.is_started:
-            self.x -= 2
+            self.x -= 1
 
     def is_out_of_screen(self):
         return self.x < -(0.05*CANVAS_WIDTH)
@@ -75,10 +77,10 @@ class Dot(Sprite):
             image=self.tk_image)
 
     def update(self):
-        if self.is_started:
+        if self.is_started and self.y <= CANVAS_HEIGHT - 20:
             self.y += self.vy
             self.vy += GRAVITY
-            self.facing_angle -= 6
+            self.facing_angle -= 4
             self.canvas.delete(self.canvas_object_id)
             self.tk_image = ImageTk.PhotoImage(
                 self.image.rotate(self.facing_angle))
@@ -139,7 +141,7 @@ class FlappyGame(GameApp):
         self.elements.append(self.pillar_pair)
 
     def check_pillar_onscreen(self):
-        if len(self.elements[1:]) != 4 and self.elements[-1].x == CANVAS_WIDTH-0.275*CANVAS_WIDTH+0.05*CANVAS_WIDTH:
+        if len(self.elements) > 1 and len(self.elements[1:]) != 4 and self.elements[-1].x <= CANVAS_WIDTH-0.275*CANVAS_WIDTH+0.05*CANVAS_WIDTH:
             self.create_pillar()
 
     def init_game(self):
@@ -148,8 +150,31 @@ class FlappyGame(GameApp):
             element.random_height()
         self.is_started = False
         self.is_gameover = False
+        self.update_pipe()
 
-    def pre_update(self):
+    def update_pipe(self):
+        global SPEED
+        if self.is_started:
+            for element in self.elements[1:]:
+                element.update()
+                element.render()
+            self.post_update()
+        if not self.is_gameover:
+            self.after(SPEED, self.update_pipe)
+
+    def update_bird(self):
+        if self.is_started or self.is_gameover:
+            self.dot.update()
+            self.dot.render()
+        self.after(10, self.update_bird)
+
+    def start(self):
+        self.update_pipe()
+        self.update_bird()
+
+    def animate(self):
+        # animate method has been deprecated. Dut to the animation shaking issue
+        # Using update_bird() and update_pipe to update element instead
         pass
 
     def post_update(self):
