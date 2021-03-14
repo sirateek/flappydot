@@ -15,6 +15,7 @@ STARTING_VELOCITY = -30
 # > Development Feature <
 DEV_ENV = False
 DEATH_MECHANISM = True
+SCORE_PER_PIPE = 1
 
 
 class PillarPair(Sprite):
@@ -40,6 +41,9 @@ class PillarPair(Sprite):
     def random_height(self):
         self.y = random.randint(0.25*CANVAS_HEIGHT,
                                 CANVAS_HEIGHT-0.25*CANVAS_HEIGHT)
+
+    def dot_passed(self):
+        return self.x == CANVAS_WIDTH//2
 
     def is_hit(self, dot):
         assert type(
@@ -102,6 +106,7 @@ class Dot(Sprite):
         return self.y > CANVAS_HEIGHT or self.y < 0
 
 
+
 class Background(Sprite):
     def init_canvas_object(self):
         self.x += CANVAS_WIDTH/2
@@ -133,8 +138,15 @@ class Background(Sprite):
     def is_out_of_screen(self):
         return (self.x) < 0
 
+class TextImage(Sprite):
+    pass
 
-class FlappyGame(GameApp):
+
+
+
+    def add_score(self):
+        self.score += SCORE_PER_PIPE
+
     def create_sprites(self):
         self.dot = Dot(self, 'images/dot.png',
                        CANVAS_WIDTH // 2, CANVAS_HEIGHT // 2)
@@ -154,8 +166,18 @@ class FlappyGame(GameApp):
         if len(self.elements[1:]) != 4 and self.elements[-1].x == CANVAS_WIDTH-0.275*CANVAS_WIDTH+0.05*CANVAS_WIDTH:
             self.create_pillar()
 
+    def displayed_score(self):
+        self.score_image_list = []
+        for i in range(len(str(self.score))):
+            image_name = 'images/number/'+str(self.score)[i]+'.png'
+            position = CANVAS_WIDTH/(3*(len(str(self.score)) + 1))
+            self.score_image_list.append(
+                TextImage(self, image_name, CANVAS_WIDTH/3 + position*(i+1), CANVAS_HEIGHT*0.1))
+
     def init_game(self):
         self.create_background()
+        self.score = 0
+        self.displayed_score()
         self.create_sprites()
         for element in self.elements[1:]:
             element.random_height()
@@ -182,6 +204,9 @@ class FlappyGame(GameApp):
             if element.is_hit(self.dot) and DEATH_MECHANISM:
                 self.is_gameover = True
                 self.is_started = False
+            if element.dot_passed():
+                self.add_score()
+                self.displayed_score()
             if element.is_out_of_screen():
                 element.reset_position()
                 element.random_height()
