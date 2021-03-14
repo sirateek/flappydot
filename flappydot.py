@@ -37,7 +37,7 @@ class PillarPair(Sprite):
         if self.x <= (CANVAS_WIDTH//2 - 80):
             self.scored = False
 
-        if self.dot_passed():
+        elif self.dot_passed():
             self.scored = True
 
     def is_out_of_screen(self):
@@ -51,8 +51,6 @@ class PillarPair(Sprite):
                                 CANVAS_HEIGHT-0.25*CANVAS_HEIGHT)
 
     def dot_passed(self):
-        # print(CANVAS_WIDTH//2-20 > self.x >
-        #   CANVAS_WIDTH//2+20 and self.is_started, self.scored)
         return CANVAS_WIDTH//2-20 < self.x < CANVAS_WIDTH//2+20 and self.is_started and not self.scored
 
     def is_hit(self, dot):
@@ -216,7 +214,6 @@ class FlappyGame(GameApp):
             if element.dot_passed() and self.is_started:
                 self.add_score()
                 self.displayed_score()
-                element.state_scored()
             element.state_scored()
             if element.is_out_of_screen():
                 element.reset_position()
