@@ -43,8 +43,7 @@ class PillarPair(Sprite):
                                 CANVAS_HEIGHT-0.25*CANVAS_HEIGHT)
 
     def dot_passed(self):
-        if self.x == CANVAS_WIDTH//2:
-            return True
+        return self.x == CANVAS_WIDTH//2
 
     def is_hit(self, dot):
         assert type(
