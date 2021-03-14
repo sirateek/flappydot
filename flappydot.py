@@ -211,7 +211,7 @@ class FlappyGame(GameApp):
         # animate method has been deprecated. Dut to the animation shaking issue
         # Using update_bird() and update_pipe to update element instead
         pass
-
+    
    def post_update(self):
         # Check if the dot is falling out from the screen
         if self.dot.is_out_of_screen() and DEATH_MECHANISM:
