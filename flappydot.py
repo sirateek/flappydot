@@ -15,6 +15,7 @@ STARTING_VELOCITY = -30
 # > Development Feature <
 DEV_ENV = False
 DEATH_MECHANISM = True
+SCORE_PER_PIPE = 10
 
 
 class PillarPair(Sprite):
@@ -112,8 +113,8 @@ class TextImage(Sprite):
 
 
 class FlappyGame(GameApp):
-    def count_score(self):
-        self.score += 1
+    def add_score(self):
+        self.score += SCORE_PER_PIPE
 
     def create_sprites(self):
         self.dot = Dot(self, 'images/dot.png',
@@ -165,7 +166,7 @@ class FlappyGame(GameApp):
                 self.is_gameover = True
                 self.is_started = False
             if element.dot_passed():
-                self.score += 1
+                self.add_score()
                 self.displayed_score()
             if element.is_out_of_screen():
                 element.reset_position()
