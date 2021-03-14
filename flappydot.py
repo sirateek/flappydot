@@ -4,7 +4,7 @@ import tkinter as tk
 import random
 
 
-CANVAS_WIDTH = 800
+CANVAS_WIDTH = 1200
 CANVAS_HEIGHT = 500
 
 GRAVITY = 0.7
@@ -21,7 +21,7 @@ UPDATE_DELAY = 33
 
 # > Development Feature <
 DEV_ENV = False
-DEATH_MECHANISM = False
+DEATH_MECHANISM = True
 SCORE_PER_PIPE = 1
 
 
