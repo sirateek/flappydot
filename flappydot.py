@@ -14,7 +14,7 @@ STARTING_VELOCITY = -30
 
 # > Development Feature <
 DEV_ENV = False
-DEATH_MECHANISM = False
+DEATH_MECHANISM = True
 
 
 class PillarPair(Sprite):
@@ -139,12 +139,13 @@ class FlappyGame(GameApp):
                 TextImage(self, image_name, CANVAS_WIDTH/3 + position*(i+1), CANVAS_HEIGHT*0.1))
 
     def init_game(self):
+        self.score = 0
+        self.displayed_score()
         self.create_sprites()
         for element in self.elements[1:]:
             element.random_height()
         self.is_started = False
         self.is_gameover = False
-        self.score = 0
 
     def pre_update(self):
         pass
