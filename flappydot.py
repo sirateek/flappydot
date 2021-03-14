@@ -13,6 +13,7 @@ STARTING_VELOCITY = -10
 INIT_PIPE_REFRESH_RATE = 20
 INIT_PIPE_SPEED = 3
 PIPE_SPEED_STEP = 1
+MAX_PIPE_SPEED = 100
 PIPE_REFRESH_RATE_STEP = 1
 DIFICULTY_STEP = 5
 
@@ -191,7 +192,8 @@ class FlappyGame(GameApp):
 
     def calculate_speed(self):
         if self.score % DIFICULTY_STEP == 0 and self.score != 0:
-            self.pipe_speed += PIPE_SPEED_STEP
+            if self.pipe_speed < MAX_PIPE_SPEED:
+                self.pipe_speed += PIPE_SPEED_STEP
             if self.pipe_refresh_rate > 1:
                 self.pipe_refresh_rate -= PIPE_REFRESH_RATE_STEP
 
