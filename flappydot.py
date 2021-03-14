@@ -141,6 +141,8 @@ class Background(Sprite):
 class TextImage(Sprite):
     pass
 
+
+class FlappyGame(GameApp):
     def add_score(self):
         self.score += SCORE_PER_PIPE
 
