@@ -14,7 +14,7 @@ STARTING_VELOCITY = -30
 
 # > Development Feature <
 DEV_ENV = False
-DEATH_MECHANISM = True
+DEATH_MECHANISM = False
 
 
 class PillarPair(Sprite):
@@ -131,20 +131,12 @@ class FlappyGame(GameApp):
             self.create_pillar()
 
     def displayed_score(self):
-        if self.score < 10:
-            image_name = 'images/number/'+self.score_image[self.score]+'.png'
-            self.score_display0 = TextImage(
-                self, image_name, CANVAS_WIDTH//2, CANVAS_HEIGHT*0.1)
-        elif self.score < 100:
-            score_split = list(str(self.score))
-            image_name0 = 'images/number/' + \
-                self.score_image[int(score_split[1])]+'.png'
-            image_name00 = 'images/number/' + \
-                self.score_image[int(score_split[0])]+'.png'
-            self.score_display0 = TextImage(
-                self, image_name0, CANVAS_WIDTH//2+40, CANVAS_HEIGHT*0.1)
-            self.score_display00 = TextImage(
-                self, image_name00, CANVAS_WIDTH//2-40, CANVAS_HEIGHT*0.1)
+        self.score_image_list = []
+        for i in range(len(str(self.score))):
+            image_name = 'images/number/'+str(self.score)[i]+'.png'
+            position = CANVAS_WIDTH/(3*(len(str(self.score)) + 1))
+            self.score_image_list.append(
+                TextImage(self, image_name, CANVAS_WIDTH/3 + position*(i+1), CANVAS_HEIGHT*0.1))
 
     def init_game(self):
         self.create_sprites()
@@ -167,13 +159,13 @@ class FlappyGame(GameApp):
             for element in self.elements[1:]:
                 element.stop()
         self.check_pillar_onscreen()
-        self.displayed_score()
         for element in self.elements[1:]:
             if element.is_hit(self.dot) and DEATH_MECHANISM:
                 self.is_gameover = True
                 self.is_started = False
             if element.dot_passed():
                 self.score += 1
+                self.displayed_score()
             if element.is_out_of_screen():
                 element.reset_position()
                 element.random_height()
