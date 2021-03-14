@@ -135,7 +135,7 @@ class Background(Sprite):
             self.x -= 3
 
     def is_out_of_screen(self):
-        return (self.x) < 0
+        return self.x < 0
 
 
 class TextImage(Sprite):
