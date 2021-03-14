@@ -68,7 +68,6 @@ class Dot(Sprite):
                 width=1, dash=(4, 2))
 
     def init_canvas_object(self):
-
         self.image = Image.open(self.image_filename)
         self.image = self.image.rotate(0)
         self.tk_image = ImageTk.PhotoImage(self.image)
@@ -107,6 +106,38 @@ class Dot(Sprite):
         return self.y > CANVAS_HEIGHT or self.y < 0
 
 
+class Background(Sprite):
+    def init_canvas_object(self):
+        self.x += CANVAS_WIDTH/2
+        self.image = Image.open(self.image_filename)
+        self.image = self.image.resize(
+            (CANVAS_WIDTH*2, CANVAS_HEIGHT), Image.ANTIALIAS)
+        self.tk_image = ImageTk.PhotoImage(self.image)
+        self.canvas_object_id = self.canvas.create_image(
+            self.x,
+            self.y,
+            image=self.tk_image)
+
+    def init_element(self):
+        self.is_started = False
+
+    def start(self):
+        self.is_started = True
+
+    def stop(self):
+        self.is_started = False
+
+    def reset_position(self):
+        self.x = CANVAS_WIDTH
+
+    def update(self):
+        if self.is_started:
+            self.x -= 3
+
+    def is_out_of_screen(self):
+        return self.x < 0
+
+
 class TextImage(Sprite):
     pass
 
@@ -126,6 +157,10 @@ class FlappyGame(GameApp):
         self.pillar_pair.random_height()
         self.elements.append(self.pillar_pair)
 
+    def create_background(self):
+        self.background = Background(
+            self, 'images/background.png', CANVAS_WIDTH/2, CANVAS_HEIGHT / 2)
+
     def check_pillar_onscreen(self):
         if len(self.elements[1:]) != 4 and self.elements[-1].x == CANVAS_WIDTH-0.275*CANVAS_WIDTH+0.05*CANVAS_WIDTH:
             self.create_pillar()
@@ -139,6 +174,7 @@ class FlappyGame(GameApp):
                 TextImage(self, image_name, CANVAS_WIDTH/3 + position*(i+1), CANVAS_HEIGHT*0.1))
 
     def init_game(self):
+        self.create_background()
         self.score = 0
         self.displayed_score()
         self.create_sprites()
@@ -146,9 +182,6 @@ class FlappyGame(GameApp):
             element.random_height()
         self.is_started = False
         self.is_gameover = False
-
-    def pre_update(self):
-        pass
 
     def post_update(self):
         # Check if the dot is falling out from the screen
@@ -159,7 +192,13 @@ class FlappyGame(GameApp):
             # Stop every eliments
             for element in self.elements[1:]:
                 element.stop()
+            self.background.stop()
+
         self.check_pillar_onscreen()
+        self.background.update()
+        self.background.render()
+        if self.background.is_out_of_screen():
+            self.background.reset_position()
         for element in self.elements[1:]:
             if element.is_hit(self.dot) and DEATH_MECHANISM:
                 self.is_gameover = True
@@ -176,6 +215,7 @@ class FlappyGame(GameApp):
             if not self.is_started and not self.is_gameover:
                 self.create_pillar()
                 self.is_started = True
+                self.background.start()
                 self.dot.start()
                 return
             if self.is_gameover:
@@ -189,6 +229,7 @@ class FlappyGame(GameApp):
             self.elements = []
             self.init_game()
             self.is_gameover = False
+
             return
 
 
