@@ -106,7 +106,6 @@ class Dot(Sprite):
         return self.y > CANVAS_HEIGHT or self.y < 0
 
 
-
 class Background(Sprite):
     def init_canvas_object(self):
         self.x += CANVAS_WIDTH/2
@@ -138,11 +137,9 @@ class Background(Sprite):
     def is_out_of_screen(self):
         return (self.x) < 0
 
+
 class TextImage(Sprite):
     pass
-
-
-
 
     def add_score(self):
         self.score += SCORE_PER_PIPE
