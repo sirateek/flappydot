@@ -43,7 +43,7 @@ class PillarPair(Sprite):
                                 CANVAS_HEIGHT-0.25*CANVAS_HEIGHT)
 
     def dot_passed(self):
-        return self.x == CANVAS_WIDTH//2
+        return self.x == CANVAS_WIDTH//2 and self.is_started
 
     def is_hit(self, dot):
         assert type(
@@ -203,7 +203,7 @@ class FlappyGame(GameApp):
             if element.is_hit(self.dot) and DEATH_MECHANISM:
                 self.is_gameover = True
                 self.is_started = False
-            if element.dot_passed():
+            if element.dot_passed() and self.is_started:
                 self.add_score()
                 self.displayed_score()
             if element.is_out_of_screen():
