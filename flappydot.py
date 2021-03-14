@@ -15,7 +15,7 @@ STARTING_VELOCITY = -30
 # > Development Feature <
 DEV_ENV = False
 DEATH_MECHANISM = True
-SCORE_PER_PIPE = 10
+SCORE_PER_PIPE = 1
 
 
 class PillarPair(Sprite):
