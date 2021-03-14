@@ -28,6 +28,7 @@ SCORE_PER_PIPE = 1
 class PillarPair(Sprite):
     def init_element(self):
         self.is_started = True
+        self.scored = False
 
     def start(self):
         self.is_started = True
@@ -38,6 +39,13 @@ class PillarPair(Sprite):
     def update(self, pipe_speed):
         if self.is_started:
             self.x -= pipe_speed
+
+    def state_scored(self):
+        if self.x <= (CANVAS_WIDTH//2 - 80):
+            self.scored = False
+
+        elif self.dot_passed():
+            self.scored = True
 
     def is_out_of_screen(self):
         return self.x < -(0.05*CANVAS_WIDTH)
@@ -50,7 +58,7 @@ class PillarPair(Sprite):
                                 CANVAS_HEIGHT-0.25*CANVAS_HEIGHT)
 
     def dot_passed(self):
-        return self.x == CANVAS_WIDTH//2
+        return CANVAS_WIDTH//2-20 < self.x < CANVAS_WIDTH//2+20 and self.is_started and not self.scored
 
     def is_hit(self, dot):
         assert type(
@@ -244,9 +252,10 @@ class FlappyGame(GameApp):
             if element.is_hit(self.dot) and DEATH_MECHANISM:
                 self.is_gameover = True
                 self.is_started = False
-            if element.dot_passed():
+            if element.dot_passed() and self.is_started:
                 self.add_score()
                 self.displayed_score()
+            element.state_scored()
             if element.is_out_of_screen():
                 element.reset_position()
                 element.random_height()
