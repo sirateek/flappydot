@@ -11,7 +11,7 @@ UPDATE_DELAY = 33
 GRAVITY = 0.7
 JUMP_VELOCITY = -10
 STARTING_VELOCITY = -10
-SPEED = 5
+SPEED = 20
 
 # > Development Feature <
 DEV_ENV = False
@@ -32,8 +32,7 @@ class PillarPair(Sprite):
 
     def update(self):
         if self.is_started:
-
-            self.x -= 1
+            self.x -= 3
 
     def is_out_of_screen(self):
         return self.x < -(0.05*CANVAS_WIDTH)
@@ -188,11 +187,12 @@ class FlappyGame(GameApp):
         self.update_pipe()
 
     def update_pipe(self):
-        global SPEED
         if self.is_started:
             for element in self.elements[1:]:
                 element.update()
                 element.render()
+            self.background.update()
+            self.background.render()
             self.post_update()
         if not self.is_gameover:
             self.after(SPEED, self.update_pipe)
@@ -204,11 +204,12 @@ class FlappyGame(GameApp):
         self.after(10, self.update_bird)
 
     def start(self):
-        self.update_pipe()
+        """For something that need to always be updated
+        """
         self.update_bird()
 
     def animate(self):
-        # animate method has been deprecated. Dut to the animation shaking issue
+        # animate method has been deprecated. Due to the animation shaking issue
         # Using update_bird() and update_pipe to update element instead
         pass
 
@@ -224,8 +225,6 @@ class FlappyGame(GameApp):
             self.background.stop()
 
         self.check_pillar_onscreen()
-        self.background.update()
-        self.background.render()
         if self.background.is_out_of_screen():
             self.background.reset_position()
         for element in self.elements[1:]:
@@ -257,7 +256,6 @@ class FlappyGame(GameApp):
                 self.canvas.delete(item.canvas_object_id)
             self.elements = []
             self.init_game()
-            self.is_gameover = False
 
             return
 
