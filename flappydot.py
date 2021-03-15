@@ -7,6 +7,7 @@ import random
 CANVAS_WIDTH = 1200
 CANVAS_HEIGHT = 600
 
+
 GRAVITY = 0.7
 JUMP_VELOCITY = -10
 STARTING_VELOCITY = -10
@@ -16,7 +17,9 @@ DO_INCREASE_SPEED_RELATED_TO_SCORE = True
 INIT_PIPE_REFRESH_RATE = 20
 INIT_PIPE_SPEED = 3
 PIPE_SPEED_STEP = 1
+
 MAX_PIPE_SPEED = 15
+MAX_PIPE_SPEED = 100
 PIPE_REFRESH_RATE_STEP = 1
 DIFICULTY_STEP = 5
 
@@ -123,6 +126,7 @@ class Dot(Sprite):
 
     def is_out_of_screen(self):
         return self.y > CANVAS_HEIGHT-40 or self.y < 0
+
 
 
 class Background(Sprite):
@@ -288,6 +292,7 @@ class FlappyGame(GameApp):
             self, "images/you-lose.png", CANVAS_WIDTH//2, CANVAS_HEIGHT//2)
         self.youlose.render()
 
+
     def init_game(self):
         self.background_list = []
         self.create_background()
@@ -301,6 +306,7 @@ class FlappyGame(GameApp):
         self.pipe_speed = INIT_PIPE_SPEED
         self.update_pipe()
 
+
         if self.intro:
             self.press_spacebar_start()
 
@@ -310,6 +316,7 @@ class FlappyGame(GameApp):
         if not self.title.status:
             self.move_in_title()
         self.intro = True
+
 
     def update_pipe(self):
         if self.is_started:
@@ -354,6 +361,7 @@ class FlappyGame(GameApp):
             for background in self.background_list:
                 background.stop()
         self.check_pillar_onscreen()
+
         self.check_pillar_onscreen()
         if self.background.is_out_of_screen():
             self.background.reset_position()
