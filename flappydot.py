@@ -128,7 +128,6 @@ class Dot(Sprite):
         return self.y > CANVAS_HEIGHT-40 or self.y < 0
 
 
-
 class Background(Sprite):
     def init_canvas_object(self):
         self.x += CANVAS_WIDTH/2
@@ -292,7 +291,6 @@ class FlappyGame(GameApp):
             self, "images/you-lose.png", CANVAS_WIDTH//2, CANVAS_HEIGHT//2)
         self.youlose.render()
 
-
     def init_game(self):
         self.background_list = []
         self.create_background()
@@ -306,7 +304,6 @@ class FlappyGame(GameApp):
         self.pipe_speed = INIT_PIPE_SPEED
         self.update_pipe()
 
-
         if self.intro:
             self.press_spacebar_start()
 
@@ -316,7 +313,6 @@ class FlappyGame(GameApp):
         if not self.title.status:
             self.move_in_title()
         self.intro = True
-
 
     def update_pipe(self):
         if self.is_started:
