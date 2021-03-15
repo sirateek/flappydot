@@ -292,8 +292,7 @@ class FlappyGame(GameApp):
         self.background_list = []
         self.create_background()
         self.score = 0
-        self.displayed_score()
-        self.create_sprites()
+
         for element in self.elements[1:]:
             element.random_height()
         self.is_started = False
@@ -376,6 +375,8 @@ class FlappyGame(GameApp):
             if not self.title.status:
                 self.move_out_title()
             if not self.is_started and not self.is_gameover and self.title.status:
+                self.displayed_score()
+                self.create_sprites()
                 self.create_pillar()
                 self.is_started = True
                 for background in self.background_list:
@@ -386,7 +387,8 @@ class FlappyGame(GameApp):
                 return
             if self.is_gameover:
                 return
-            self.dot.jump()
+            if self.title.status:
+                self.dot.jump()
 
         if event.keysym == "r" and self.is_gameover:
             # R button press to reset game when gameover.
