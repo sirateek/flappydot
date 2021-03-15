@@ -166,8 +166,10 @@ class FlappyGame(GameApp):
         self.elements.append(self.pillar_pair)
 
     def create_background(self):
-        self.background = Background(
-            self, 'images/background.png', CANVAS_WIDTH/2, CANVAS_HEIGHT / 2)
+        for i in self.background_name:
+            self.background = Background(
+                self, 'images/'+i+".png", CANVAS_WIDTH/2, CANVAS_HEIGHT / 2)
+            self.background_list.append(self.background)
 
     def check_pillar_onscreen(self):
         if len(self.elements[1:]) != 4 and self.elements[-1].x == CANVAS_WIDTH-0.275*CANVAS_WIDTH+0.05*CANVAS_WIDTH:
@@ -182,6 +184,7 @@ class FlappyGame(GameApp):
                 TextImage(self, image_name, CANVAS_WIDTH/3 + position*(i+1), CANVAS_HEIGHT*0.1))
 
     def init_game(self):
+        self.background_list = []
         self.create_background()
         self.score = 0
         self.displayed_score()
@@ -200,13 +203,15 @@ class FlappyGame(GameApp):
             # Stop every eliments
             for element in self.elements[1:]:
                 element.stop()
-            self.background.stop()
+            for background in self.background_list:
+                background.stop()
 
         self.check_pillar_onscreen()
-        self.background.update()
-        self.background.render()
-        if self.background.is_out_of_screen():
-            self.background.reset_position()
+        for background in self.background_list:
+            background.update()
+            background.render()
+            if background.is_out_of_screen():
+                background.reset_position()
         for element in self.elements[1:]:
             if element.is_hit(self.dot) and DEATH_MECHANISM:
                 self.is_gameover = True
@@ -224,7 +229,8 @@ class FlappyGame(GameApp):
             if not self.is_started and not self.is_gameover:
                 self.create_pillar()
                 self.is_started = True
-                self.background.start()
+                for background in self.background_list:
+                    background.start()
                 self.dot.start()
                 return
             if self.is_gameover:
