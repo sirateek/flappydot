@@ -1,5 +1,5 @@
 from gamelib import Sprite, GameApp, Text
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageSequence
 import tkinter as tk
 import random
 
@@ -122,7 +122,7 @@ class Dot(Sprite):
         self.vy = JUMP_VELOCITY
 
     def is_out_of_screen(self):
-        return self.y > CANVAS_HEIGHT-10 or self.y < 0
+        return self.y > CANVAS_HEIGHT-40 or self.y < 0
 
 
 class Background(Sprite):
@@ -230,9 +230,46 @@ class FlappyGame(GameApp):
         self.title.render()
         self.after(10, self.move_out_title)
 
+    def spacebar_start(self):
+        self.spacebar_status = True
+
+    def spacebar_stop(self):
+        self.spacebar_status = False
+
+    def spaceon(self):
+        if not self.spacebar_status:
+            return
+        self.spacebar = Title(
+            self, "images/intro/spacebar0.png", CANVAS_WIDTH//2, CANVAS_HEIGHT - CANVAS_HEIGHT*0.15)
+        self.spacebar.render()
+        self.after(800, self.spaceoff)
+
+    def spaceoff(self):
+        if not self.spacebar_status:
+            return
+        self.spacebar = Title(
+            self, "images/intro/spacebar1.png", CANVAS_WIDTH//2, CANVAS_HEIGHT - CANVAS_HEIGHT*0.15)
+        self.spacebar.render()
+        self.after(100, self.spaceon)
+
+    def spacebar_loop(self):
+        self.spaceon()
+
+    def delete_spacebar(self):
+        self.canvas.delete(f"{self.spacebar.canvas_object_id}")
+        self.canvas.delete(f"{self.press_start.canvas_object_id}")
+
+    def press_spacebar_start(self):
+        self.spacebar_status = True
+        self.press_start = Title(
+            self, "images/intro/press-start.png", CANVAS_WIDTH//2, CANVAS_HEIGHT-CANVAS_HEIGHT*0.2)
+        self.press_start.render()
+        self.spacebar_loop()
+
     def move_in_title(self):
         if self.title.y == CANVAS_HEIGHT//2:
             self.title.is_done = True
+            self.press_spacebar_start()
             return
         self.title.move_in()
         self.title.render()
@@ -250,11 +287,15 @@ class FlappyGame(GameApp):
         self.pipe_refresh_rate = INIT_PIPE_REFRESH_RATE
         self.pipe_speed = INIT_PIPE_SPEED
         self.update_pipe()
+        if self.intro:
+            self.press_spacebar_start()
 
     def start_title(self):
         self.create_title()
+        self.spacebar_status = True
         if not self.title.status:
             self.move_in_title()
+        self.intro = True
 
     def update_pipe(self):
         if self.is_started:
@@ -263,8 +304,6 @@ class FlappyGame(GameApp):
                 element.render()
             self.background.update()
             self.background.render()
-            # self.title.move_down()
-            # self.title.render()
             self.post_update()
         if not self.is_gameover:
             self.after(self.pipe_refresh_rate, self.update_pipe)
@@ -314,12 +353,13 @@ class FlappyGame(GameApp):
         if event.keysym == "space" and self.title.is_done:
             if not self.title.status:
                 self.move_out_title()
-                print(self.title.status)
             if not self.is_started and not self.is_gameover and self.title.status:
                 self.create_pillar()
                 self.is_started = True
                 self.background.start()
                 self.dot.start()
+                self.spacebar_stop()
+                self.delete_spacebar()
                 return
             if self.is_gameover:
                 return
