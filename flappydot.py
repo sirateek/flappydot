@@ -1,19 +1,22 @@
 from gamelib import Sprite, GameApp, Text
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageSequence
 import tkinter as tk
 import random
 
 
 CANVAS_WIDTH = 1200
-CANVAS_HEIGHT = 500
+CANVAS_HEIGHT = 600
 
 GRAVITY = 0.7
 JUMP_VELOCITY = -10
 STARTING_VELOCITY = -10
+
+# Game Speed
+DO_INCREASE_SPEED_RELATED_TO_SCORE = True
 INIT_PIPE_REFRESH_RATE = 20
 INIT_PIPE_SPEED = 3
 PIPE_SPEED_STEP = 1
-MAX_PIPE_SPEED = 15
+MAX_PIPE_SPEED = 100
 PIPE_REFRESH_RATE_STEP = 1
 DIFICULTY_STEP = 5
 
@@ -119,7 +122,7 @@ class Dot(Sprite):
         self.vy = JUMP_VELOCITY
 
     def is_out_of_screen(self):
-        return self.y > CANVAS_HEIGHT-10 or self.y < 0
+        return self.y > CANVAS_HEIGHT-40 or self.y < 0
 
 
 class Background(Sprite):
@@ -161,10 +164,32 @@ class TextImage(Sprite):
     pass
 
 
+class Title(TextImage):
+    def init_element(self):
+        self.status = False
+        self.is_done = False
+
+    def move_in(self):
+        if self.y < CANVAS_HEIGHT//2:
+            self.y += 2
+
+    def move_out(self):
+        if self.y < CANVAS_HEIGHT*2:
+            self.y += 4
+
+    def done(self):
+        self.status = True
+
+
 class FlappyGame(GameApp):
+    def create_title(self):
+        self.title = Title(
+            self, "images/intro/title.png", CANVAS_WIDTH//2, -CANVAS_HEIGHT//1.5)
+
     def add_score(self):
         self.score += SCORE_PER_PIPE
-        self.calculate_speed()
+        if DO_INCREASE_SPEED_RELATED_TO_SCORE:
+            self.calculate_speed()
 
     def create_sprites(self):
         self.dot = Dot(self, 'images/dot.png',
@@ -173,7 +198,7 @@ class FlappyGame(GameApp):
 
     def create_pillar(self):
         self.pillar_pair = PillarPair(
-            self, 'images/pillar-pair.png', CANVAS_WIDTH+0.05*CANVAS_WIDTH, CANVAS_HEIGHT // 2)
+            self, 'images/pillar-pair.png', CANVAS_WIDTH+0.05*CANVAS_WIDTH, CANVAS_HEIGHT//2)
         self.pillar_pair.random_height()
         self.elements.append(self.pillar_pair)
 
@@ -205,6 +230,64 @@ class FlappyGame(GameApp):
             if self.pipe_refresh_rate > 1:
                 self.pipe_refresh_rate -= PIPE_REFRESH_RATE_STEP
 
+    def move_out_title(self):
+        if self.title.y > CANVAS_HEIGHT*1.5:
+            self.title.status = True
+            return
+        self.title.move_out()
+        self.title.render()
+        self.after(10, self.move_out_title)
+
+    def spacebar_start(self):
+        self.spacebar_status = True
+
+    def spacebar_stop(self):
+        self.spacebar_status = False
+
+    def spaceon(self):
+        if not self.spacebar_status:
+            return
+        self.spacebar = Title(
+            self, "images/intro/spacebar0.png", CANVAS_WIDTH//2, CANVAS_HEIGHT - CANVAS_HEIGHT*0.15)
+        self.spacebar.render()
+        self.after(800, self.spaceoff)
+
+    def spaceoff(self):
+        if not self.spacebar_status:
+            return
+        self.spacebar = Title(
+            self, "images/intro/spacebar1.png", CANVAS_WIDTH//2, CANVAS_HEIGHT - CANVAS_HEIGHT*0.15)
+        self.spacebar.render()
+        self.after(100, self.spaceon)
+
+    def spacebar_loop(self):
+        self.spaceon()
+
+    def delete_spacebar(self):
+        self.canvas.delete(f"{self.spacebar.canvas_object_id}")
+        self.canvas.delete(f"{self.press_start.canvas_object_id}")
+
+    def press_spacebar_start(self):
+        self.spacebar_status = True
+        self.press_start = Title(
+            self, "images/intro/press-start.png", CANVAS_WIDTH//2, CANVAS_HEIGHT-CANVAS_HEIGHT*0.2)
+        self.press_start.render()
+        self.spacebar_loop()
+
+    def move_in_title(self):
+        if self.title.y == CANVAS_HEIGHT//2:
+            self.title.is_done = True
+            self.press_spacebar_start()
+            return
+        self.title.move_in()
+        self.title.render()
+        self.after(10, self.move_in_title)
+
+    def youlose_popup(self):
+        self.youlose = TextImage(
+            self, "images/you-lose.png", CANVAS_WIDTH//2, CANVAS_HEIGHT//2)
+        self.youlose.render()
+
     def init_game(self):
         self.background_list = []
         self.create_background()
@@ -219,6 +302,16 @@ class FlappyGame(GameApp):
         self.pipe_speed = INIT_PIPE_SPEED
         self.update_pipe()
 
+        if self.intro:
+            self.press_spacebar_start()
+
+    def start_title(self):
+        self.create_title()
+        self.spacebar_status = True
+        if not self.title.status:
+            self.move_in_title()
+        self.intro = True
+
     def update_pipe(self):
         if self.is_started:
             for element in self.elements[1:]:
@@ -227,6 +320,8 @@ class FlappyGame(GameApp):
             for background in self.background_list:
                 background.update()
                 background.render()
+                if background.is_out_of_screen():
+                    background.reset_position()
             self.post_update()
         if not self.is_gameover:
             self.after(self.pipe_refresh_rate, self.update_pipe)
@@ -250,6 +345,7 @@ class FlappyGame(GameApp):
     def post_update(self):
         # Check if the dot is falling out from the screen
         if self.dot.is_out_of_screen() and DEATH_MECHANISM:
+            self.youlose_popup()
             # Change game state to gameover
             self.is_started = False
             self.is_gameover = True
@@ -258,16 +354,13 @@ class FlappyGame(GameApp):
                 element.stop()
             for background in self.background_list:
                 background.stop()
-
         self.check_pillar_onscreen()
-
-        for background in self.background_list:
-            background.update()
-            background.render()
-            if background.is_out_of_screen():
-                background.reset_position()
+        self.check_pillar_onscreen()
+        if self.background.is_out_of_screen():
+            self.background.reset_position()
         for element in self.elements[1:]:
             if element.is_hit(self.dot) and DEATH_MECHANISM:
+                self.youlose_popup()
                 self.is_gameover = True
                 self.is_started = False
             if element.dot_passed() and self.is_started:
@@ -279,13 +372,17 @@ class FlappyGame(GameApp):
                 element.random_height()
 
     def on_key_pressed(self, event):
-        if event.keysym == "space":
-            if not self.is_started and not self.is_gameover:
+        if event.keysym == "space" and self.title.is_done:
+            if not self.title.status:
+                self.move_out_title()
+            if not self.is_started and not self.is_gameover and self.title.status:
                 self.create_pillar()
                 self.is_started = True
                 for background in self.background_list:
                     background.start()
                 self.dot.start()
+                self.spacebar_stop()
+                self.delete_spacebar()
                 return
             if self.is_gameover:
                 return
