@@ -172,7 +172,7 @@ class Title(TextImage):
 
     def move_out(self):
         if self.y < CANVAS_HEIGHT*2:
-            self.y += 1
+            self.y += 4
 
     def done(self):
         self.status = True
