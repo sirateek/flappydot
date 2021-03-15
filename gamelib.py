@@ -79,7 +79,7 @@ class GameApp(ttk.Frame):
 
         self.elements = []
         self.init_game()
-
+        self.start_title()
         self.parent.bind('<KeyPress>', self.on_key_pressed)
         self.parent.bind('<KeyRelease>', self.on_key_released)
 

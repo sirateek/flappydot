@@ -158,15 +158,30 @@ class Background(Sprite):
 
 
 class TextImage(Sprite):
+    pass
+
+
+class Title(TextImage):
+    def init_element(self):
+        self.status = False
+        self.is_done = False
+
     def move_in(self):
         if self.y < CANVAS_HEIGHT//2:
+            self.y += 2
+
+    def move_out(self):
+        if self.y < CANVAS_HEIGHT*2:
             self.y += 1
+
+    def done(self):
+        self.status = True
 
 
 class FlappyGame(GameApp):
     def create_title(self):
-        self.title = TextImage(
-            self, "images/intro/title.png", CANVAS_WIDTH//2, -CANVAS_HEIGHT//2)
+        self.title = Title(
+            self, "images/intro/title.png", CANVAS_WIDTH//2, -CANVAS_HEIGHT//1.5)
 
     def add_score(self):
         self.score += SCORE_PER_PIPE
@@ -207,10 +222,21 @@ class FlappyGame(GameApp):
             if self.pipe_refresh_rate > 1:
                 self.pipe_refresh_rate -= PIPE_REFRESH_RATE_STEP
 
-    def move_down_title(self):
+    def move_out_title(self):
+        if self.title.y > CANVAS_HEIGHT*1.5:
+            self.title.status = True
+            return
+        self.title.move_out()
+        self.title.render()
+        self.after(10, self.move_out_title)
+
+    def move_in_title(self):
+        if self.title.y == CANVAS_HEIGHT//2:
+            self.title.is_done = True
+            return
         self.title.move_in()
         self.title.render()
-        self.after(10, self.move_down_title)
+        self.after(10, self.move_in_title)
 
     def init_game(self):
         self.create_background()
@@ -224,8 +250,11 @@ class FlappyGame(GameApp):
         self.pipe_refresh_rate = INIT_PIPE_REFRESH_RATE
         self.pipe_speed = INIT_PIPE_SPEED
         self.update_pipe()
+
+    def start_title(self):
         self.create_title()
-        self.move_down_title()
+        if not self.title.status:
+            self.move_in_title()
 
     def update_pipe(self):
         if self.is_started:
@@ -282,8 +311,11 @@ class FlappyGame(GameApp):
                 element.random_height()
 
     def on_key_pressed(self, event):
-        if event.keysym == "space":
-            if not self.is_started and not self.is_gameover:
+        if event.keysym == "space" and self.title.is_done:
+            if not self.title.status:
+                self.move_out_title()
+                print(self.title.status)
+            if not self.is_started and not self.is_gameover and self.title.status:
                 self.create_pillar()
                 self.is_started = True
                 self.background.start()
