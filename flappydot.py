@@ -10,6 +10,9 @@ CANVAS_HEIGHT = 500
 GRAVITY = 0.7
 JUMP_VELOCITY = -10
 STARTING_VELOCITY = -10
+
+# Game Speed
+DO_INCREASE_SPEED_RELATED_TO_SCORE = True
 INIT_PIPE_REFRESH_RATE = 20
 INIT_PIPE_SPEED = 3
 PIPE_SPEED_STEP = 1
@@ -161,7 +164,8 @@ class TextImage(Sprite):
 class FlappyGame(GameApp):
     def add_score(self):
         self.score += SCORE_PER_PIPE
-        self.calculate_speed()
+        if DO_INCREASE_SPEED_RELATED_TO_SCORE:
+            self.calculate_speed()
 
     def create_sprites(self):
         self.dot = Dot(self, 'images/dot.png',
