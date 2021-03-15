@@ -5,7 +5,7 @@ import random
 
 
 CANVAS_WIDTH = 1200
-CANVAS_HEIGHT = 500
+CANVAS_HEIGHT = 600
 
 GRAVITY = 0.7
 JUMP_VELOCITY = -10
@@ -275,6 +275,11 @@ class FlappyGame(GameApp):
         self.title.render()
         self.after(10, self.move_in_title)
 
+    def youlose_popup(self):
+        self.youlose = TextImage(
+            self, "images/you-lose.png", CANVAS_WIDTH//2, CANVAS_HEIGHT//2)
+        self.youlose.render()
+
     def init_game(self):
         self.create_background()
         self.score = 0
@@ -327,6 +332,7 @@ class FlappyGame(GameApp):
     def post_update(self):
         # Check if the dot is falling out from the screen
         if self.dot.is_out_of_screen() and DEATH_MECHANISM:
+            self.youlose_popup()
             # Change game state to gameover
             self.is_started = False
             self.is_gameover = True
@@ -339,6 +345,7 @@ class FlappyGame(GameApp):
             self.background.reset_position()
         for element in self.elements[1:]:
             if element.is_hit(self.dot) and DEATH_MECHANISM:
+                self.youlose_popup()
                 self.is_gameover = True
                 self.is_started = False
             if element.dot_passed() and self.is_started:
