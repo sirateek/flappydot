@@ -7,10 +7,18 @@ import random
 CANVAS_WIDTH = 1200
 CANVAS_HEIGHT = 500
 
+GRAVITY = 0.7
+JUMP_VELOCITY = -10
+STARTING_VELOCITY = -10
+INIT_PIPE_REFRESH_RATE = 20
+INIT_PIPE_SPEED = 3
+PIPE_SPEED_STEP = 1
+MAX_PIPE_SPEED = 15
+PIPE_REFRESH_RATE_STEP = 1
+DIFICULTY_STEP = 5
+
+# Deprecated
 UPDATE_DELAY = 33
-GRAVITY = 2.5
-JUMP_VELOCITY = -20
-STARTING_VELOCITY = -30
 
 # > Development Feature <
 DEV_ENV = False
@@ -29,9 +37,9 @@ class PillarPair(Sprite):
     def stop(self):
         self.is_started = False
 
-    def update(self):
+    def update(self, pipe_speed):
         if self.is_started:
-            self.x -= 5
+            self.x -= pipe_speed
 
     def state_scored(self):
         if self.x <= (CANVAS_WIDTH//2 - 80):
@@ -85,10 +93,10 @@ class Dot(Sprite):
             image=self.tk_image)
 
     def update(self):
-        if self.is_started:
+        if self.is_started and self.y <= CANVAS_HEIGHT - 20:
             self.y += self.vy
             self.vy += GRAVITY
-            self.facing_angle -= 6
+            self.facing_angle -= 4
             self.canvas.delete(self.canvas_object_id)
             self.tk_image = ImageTk.PhotoImage(
                 self.image.rotate(self.facing_angle))
@@ -111,7 +119,7 @@ class Dot(Sprite):
         self.vy = JUMP_VELOCITY
 
     def is_out_of_screen(self):
-        return self.y > CANVAS_HEIGHT or self.y < 0
+        return self.y > CANVAS_HEIGHT-10 or self.y < 0
 
 
 class Background(Sprite):
@@ -145,6 +153,9 @@ class Background(Sprite):
     def is_out_of_screen(self):
         return self.x < 0
 
+    def delete_self(self):
+        self.canvas.delete(f"{self.canvas_object_id}")
+
 
 class TextImage(Sprite):
     pass
@@ -153,6 +164,7 @@ class TextImage(Sprite):
 class FlappyGame(GameApp):
     def add_score(self):
         self.score += SCORE_PER_PIPE
+        self.calculate_speed()
 
     def create_sprites(self):
         self.dot = Dot(self, 'images/dot.png',
@@ -172,7 +184,7 @@ class FlappyGame(GameApp):
             self.background_list.append(self.background)
 
     def check_pillar_onscreen(self):
-        if len(self.elements[1:]) != 4 and self.elements[-1].x == CANVAS_WIDTH-0.275*CANVAS_WIDTH+0.05*CANVAS_WIDTH:
+        if len(self.elements) > 1 and len(self.elements[1:]) != 4 and self.elements[-1].x <= CANVAS_WIDTH-0.275*CANVAS_WIDTH+0.05*CANVAS_WIDTH:
             self.create_pillar()
 
     def displayed_score(self):
@@ -182,6 +194,16 @@ class FlappyGame(GameApp):
             position = CANVAS_WIDTH/(3*(len(str(self.score)) + 1))
             self.score_image_list.append(
                 TextImage(self, image_name, CANVAS_WIDTH/3 + position*(i+1), CANVAS_HEIGHT*0.1))
+
+    def calculate_speed(self):
+        if self.score % DIFICULTY_STEP == 0 and self.score != 0:
+            if self.pipe_speed < MAX_PIPE_SPEED:
+                if len(self.background_list) > 1:
+                    self.canvas.delete(
+                        f"{self.background_list.pop(-1).canvas_object_id}")
+                self.pipe_speed += PIPE_SPEED_STEP
+            if self.pipe_refresh_rate > 1:
+                self.pipe_refresh_rate -= PIPE_REFRESH_RATE_STEP
 
     def init_game(self):
         self.background_list = []
@@ -193,6 +215,37 @@ class FlappyGame(GameApp):
             element.random_height()
         self.is_started = False
         self.is_gameover = False
+        self.pipe_refresh_rate = INIT_PIPE_REFRESH_RATE
+        self.pipe_speed = INIT_PIPE_SPEED
+        self.update_pipe()
+
+    def update_pipe(self):
+        if self.is_started:
+            for element in self.elements[1:]:
+                element.update(self.pipe_speed)
+                element.render()
+            for background in self.background_list:
+                background.update()
+                background.render()
+            self.post_update()
+        if not self.is_gameover:
+            self.after(self.pipe_refresh_rate, self.update_pipe)
+
+    def update_bird(self):
+        if self.is_started or self.is_gameover:
+            self.dot.update()
+            self.dot.render()
+        self.after(10, self.update_bird)
+
+    def start(self):
+        """For something that need to always be updated
+        """
+        self.update_bird()
+
+    def animate(self):
+        # animate method has been deprecated. Due to the animation shaking issue
+        # Using update_bird() and update_pipe to update element instead
+        pass
 
     def post_update(self):
         # Check if the dot is falling out from the screen
@@ -207,6 +260,7 @@ class FlappyGame(GameApp):
                 background.stop()
 
         self.check_pillar_onscreen()
+
         for background in self.background_list:
             background.update()
             background.render()
@@ -243,7 +297,6 @@ class FlappyGame(GameApp):
                 self.canvas.delete(item.canvas_object_id)
             self.elements = []
             self.init_game()
-            self.is_gameover = False
 
             return
 
