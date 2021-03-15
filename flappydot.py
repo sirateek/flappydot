@@ -295,7 +295,6 @@ class FlappyGame(GameApp):
         self.background_list = []
         self.create_background()
         self.score = 0
-
         for element in self.elements[1:]:
             element.random_height()
         self.is_started = False
@@ -303,7 +302,6 @@ class FlappyGame(GameApp):
         self.pipe_refresh_rate = INIT_PIPE_REFRESH_RATE
         self.pipe_speed = INIT_PIPE_SPEED
         self.update_pipe()
-
         if self.intro:
             self.press_spacebar_start()
 
