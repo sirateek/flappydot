@@ -34,4 +34,4 @@ jobs:
     - name: Lint with pycodestyle
       run: |
         # stop the build if there are Python syntax errors or undefined names
-        pycodestyle . --max-line-length=150
+        pycodestyle . --max-line-length=150 --exclude=helper_modules
