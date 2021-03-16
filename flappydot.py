@@ -1,5 +1,5 @@
 from gamelib import Sprite, GameApp, Text
-from PIL import Image, ImageTk
+from helper_modules.PIL import Image, ImageTk
 import tkinter as tk
 import random
 
