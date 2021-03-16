@@ -181,10 +181,6 @@ class Title(TextImage):
 
 
 class FlappyGame(GameApp):
-    def create_title(self):
-        self.title = Title(
-            self, "images/intro/title.png", CANVAS_WIDTH//2, -CANVAS_HEIGHT/4)
-
     def add_score(self):
         self.score += SCORE_PER_PIPE
         if DO_INCREASE_SPEED_RELATED_TO_SCORE:
@@ -228,6 +224,10 @@ class FlappyGame(GameApp):
                 self.pipe_speed += PIPE_SPEED_STEP
             if self.pipe_refresh_rate > 1:
                 self.pipe_refresh_rate -= PIPE_REFRESH_RATE_STEP
+
+    def create_title(self):
+        self.title = Title(
+            self, "images/intro/title.png", CANVAS_WIDTH//2, -CANVAS_HEIGHT/4)
 
     def move_out_title(self):
         if self.title.y > CANVAS_HEIGHT*1.5:
