@@ -21,9 +21,6 @@ MAX_PIPE_SPEED = 100
 PIPE_REFRESH_RATE_STEP = 1
 DIFICULTY_STEP = 5
 
-# Deprecated
-UPDATE_DELAY = 33
-
 # > Development Feature <
 DEV_ENV = False
 DEATH_MECHANISM = True
