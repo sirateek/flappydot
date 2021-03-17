@@ -276,7 +276,7 @@ class FlappyGame(GameApp):
 
     def gameover_popup(self):
         self.youlose = TextImage(
-            self, "images/you-lose.png", CANVAS_WIDTH//2, CANVAS_HEIGHT//2)
+            self, "images/gameover.png", CANVAS_WIDTH//2, CANVAS_HEIGHT//2)
         self.youlose.render()
 
     def init_game(self):
