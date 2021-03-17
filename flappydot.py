@@ -259,7 +259,7 @@ class FlappyGame(GameApp):
         self.canvas.delete(f"{self.spacebar.canvas_object_id}")
         self.canvas.delete(f"{self.press_start.canvas_object_id}")
 
-    def press_spacebar_start(self):
+    def show_press_spacebar(self):
         self.spacebar_status = True
         self.press_start = Title(
             self, "images/intro/press-start.png", CANVAS_WIDTH//2, CANVAS_HEIGHT-CANVAS_HEIGHT*0.2)
@@ -269,13 +269,13 @@ class FlappyGame(GameApp):
     def move_in_title(self):
         if self.title.y == CANVAS_HEIGHT*0.25:
             self.title.is_done = True
-            self.press_spacebar_start()
+            self.show_press_spacebar()
             return
         self.title.move_in()
         self.title.render()
         self.after(10, self.move_in_title)
 
-    def youlose_popup(self):
+    def gameover_popup(self):
         self.youlose = TextImage(
             self, "images/you-lose.png", CANVAS_WIDTH//2, CANVAS_HEIGHT//2)
         self.youlose.render()
@@ -294,7 +294,7 @@ class FlappyGame(GameApp):
         self.pipe_speed = INIT_PIPE_SPEED
         self.update_pipe()
         if self.title.is_done:
-            self.press_spacebar_start()
+            self.show_press_spacebar()
 
     def update_pipe(self):
         if self.is_started:
@@ -326,7 +326,7 @@ class FlappyGame(GameApp):
     def post_update(self):
         # Check if the dot is falling out from the screen
         if self.dot.is_out_of_screen() and DEATH_MECHANISM:
-            self.youlose_popup()
+            self.gameover_popup()
             # Change game state to gameover
             self.is_started = False
             self.is_gameover = True
@@ -339,7 +339,7 @@ class FlappyGame(GameApp):
             self.background.reset_position()
         for element in self.elements[1:]:
             if element.is_hit(self.dot) and DEATH_MECHANISM:
-                self.youlose_popup()
+                self.gameover_popup()
                 self.is_gameover = True
                 self.is_started = False
             if element.dot_passed() and self.is_started:
