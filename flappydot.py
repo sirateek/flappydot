@@ -2,7 +2,7 @@ from gamelib import Sprite, GameApp, Text
 import tkinter as tk
 import random
 if __name__ != "__main__":
-    from helper_modules.PIL import Image, ImageTk
+    from PIL import Image, ImageTk
 
 CANVAS_WIDTH = None
 CANVAS_HEIGHT = None
