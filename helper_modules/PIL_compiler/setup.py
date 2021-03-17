@@ -208,8 +208,9 @@ def _add_directory(path, subdir, where=None):
 
 
 def _find_include_file(self, include):
+    # For zlib include
     self.compiler.include_dirs.append(
-        os.getcwd() + "/helper_modules/PIL_compiler/src")
+        os.path.join(os.getcwd(), "helper_modules", "PIL_compiler", "src", "zlib"))
     for directory in self.compiler.include_dirs:
         _dbg("Checking for include file %s in %s", (include, directory))
         if os.path.isfile(os.path.join(directory, include)):
