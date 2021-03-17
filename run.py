@@ -38,7 +38,7 @@ try:
     announce("P", "PIL is installed", prefix=" |-")
     PREREQUEST_CHECK_PASS = True
 except ImportError as e:
-    if e.args[0][0:37] == "cannot import name 'Image' from 'PIL'":
+    if e.args[0][0:37] == "cannot import name 'Image' from 'PIL'" or e.args[0] == "No module named 'PIL'":
         announce("X", "PIL is not installed", prefix=" |-")
         while True:
             ask_install = input(
