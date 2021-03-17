@@ -177,14 +177,30 @@ class Title(TextImage):
 
 
 class FlappyGame(GameApp):
+    def init_game(self):
+        # For updating the CANVAS_HEIGHT and CANVAS_WIDTH in the global scope.
+        global CANVAS_HEIGHT, CANVAS_WIDTH
+        CANVAS_WIDTH = self.canvas_width
+        CANVAS_HEIGHT = self.canvas_height
+
+        self.create_background()
+        self.score = 0
+        self.create_title()
+        self.spacebar_status = True
+        self.intro = True
+        self.move_in_title()
+        self.create_sprites()
+        self.is_started = False
+        self.is_gameover = False
+        self.pipe_refresh_rate = INIT_PIPE_REFRESH_RATE
+        self.pipe_speed = INIT_PIPE_SPEED
+        self.update_pipe()
+        if self.title.is_done:
+            self.show_press_spacebar()
+
     def create_title(self):
         self.title = Title(
             self, "images/intro/title.png", CANVAS_WIDTH//2, 0-CANVAS_HEIGHT*0.1)
-
-    def add_score(self):
-        self.score += SCORE_PER_PIPE
-        if DO_INCREASE_SPEED_RELATED_TO_SCORE:
-            self.calculate_speed()
 
     def create_sprites(self):
         self.dot = Dot(self, 'images/dot.png',
@@ -205,6 +221,11 @@ class FlappyGame(GameApp):
         if len(self.elements) > 1 and len(self.elements[1:]) != 4 and self.elements[-1].x <= CANVAS_WIDTH-0.275*CANVAS_WIDTH+0.05*CANVAS_WIDTH:
             self.create_pillar()
 
+    def add_score(self):
+        self.score += SCORE_PER_PIPE
+        if DO_INCREASE_SPEED_RELATED_TO_SCORE:
+            self.calculate_speed()
+
     def displayed_score(self):
         self.score_image_list = []
         for i in range(len(str(self.score))):
@@ -219,15 +240,6 @@ class FlappyGame(GameApp):
                 self.pipe_speed += PIPE_SPEED_STEP
             if self.pipe_refresh_rate > 1:
                 self.pipe_refresh_rate -= PIPE_REFRESH_RATE_STEP
-
-    def move_out_title(self):
-        if self.title.y > CANVAS_HEIGHT*1.5:
-            self.title.status = True
-            self.title.is_done = True
-            return
-        self.title.move_out()
-        self.title.render()
-        self.after(1, self.move_out_title)
 
     def spacebar_start(self):
         self.spacebar_status = True
@@ -251,19 +263,19 @@ class FlappyGame(GameApp):
         self.spacebar.render()
         self.after(100, self.space_on)
 
-    def spacebar_loop(self):
-        self.space_on()
-
-    def delete_spacebar(self):
-        self.canvas.delete(f"{self.spacebar.canvas_object_id}")
-        self.canvas.delete(f"{self.press_start.canvas_object_id}")
-
     def show_press_spacebar(self):
         self.spacebar_status = True
         self.press_start = Title(
             self, "images/intro/press-start.png", CANVAS_WIDTH//2, CANVAS_HEIGHT-CANVAS_HEIGHT*0.2)
         self.press_start.render()
         self.spacebar_loop()
+
+    def spacebar_loop(self):
+        self.space_on()
+
+    def delete_spacebar(self):
+        self.canvas.delete(f"{self.spacebar.canvas_object_id}")
+        self.canvas.delete(f"{self.press_start.canvas_object_id}")
 
     def move_in_title(self):
         if self.title.y == CANVAS_HEIGHT*0.25:
@@ -274,31 +286,19 @@ class FlappyGame(GameApp):
         self.title.render()
         self.after(10, self.move_in_title)
 
+    def move_out_title(self):
+        if self.title.y > CANVAS_HEIGHT*1.5:
+            self.title.status = True
+            self.title.is_done = True
+            return
+        self.title.move_out()
+        self.title.render()
+        self.after(1, self.move_out_title)
+
     def gameover_popup(self):
         self.youlose = TextImage(
             self, "images/gameover.png", CANVAS_WIDTH//2, CANVAS_HEIGHT//2)
         self.youlose.render()
-
-    def init_game(self):
-        # For updating the CANVAS_HEIGHT and CANVAS_WIDTH in the global scope.
-        global CANVAS_HEIGHT, CANVAS_WIDTH
-        CANVAS_WIDTH = self.canvas_width
-        CANVAS_HEIGHT = self.canvas_height
-
-        self.create_background()
-        self.score = 0
-        self.create_title()
-        self.spacebar_status = True
-        self.intro = True
-        self.move_in_title()
-        self.create_sprites()
-        self.is_started = False
-        self.is_gameover = False
-        self.pipe_refresh_rate = INIT_PIPE_REFRESH_RATE
-        self.pipe_speed = INIT_PIPE_SPEED
-        self.update_pipe()
-        if self.title.is_done:
-            self.show_press_spacebar()
 
     def update_pipe(self):
         if self.is_started:
@@ -378,7 +378,6 @@ class FlappyGame(GameApp):
                 self.canvas.delete(item.canvas_object_id)
             self.elements = []
             self.init_game()
-
             return
 
 
