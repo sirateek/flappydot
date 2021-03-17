@@ -356,10 +356,11 @@ class FlappyGame(GameApp):
                 element.random_height()
 
     def on_key_pressed(self, event):
-        if event.keysym == "space" and self.title.is_done:
+        if event.keysym == "space":
             if not self.title.status:
                 self.move_out_title()
-            if not self.is_started and not self.is_gameover and self.title.status:
+                self.delete_spacebar()
+            if not self.is_started and not self.is_gameover:
                 self.create_pillar()
                 self.displayed_score()
                 self.is_started = True
