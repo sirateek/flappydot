@@ -24,7 +24,7 @@ def start_game():
 
 welcome_message = """\
                 Welcome to flappydot game
-                        Ver. 0.1.0
+                        Ver. 1.0.0
 """
 print("-" * 60)
 print(welcome_message, end="")
