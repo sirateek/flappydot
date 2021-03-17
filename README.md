@@ -9,6 +9,8 @@ Flappy dot. KU Computer Programming II Homework.
 |------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | PEP8 Check | [![Python PEP8 Check](https://github.com/sirateek/flappydot/actions/workflows/pep8.yml/badge.svg)](https://github.com/sirateek/flappydot/actions/workflows/pep8.yml) |
 
+# Version
+v.1.0.0
 # Installation
 1. Clone this repository into your local computer
 2. Start game by running `python3 run.py`
