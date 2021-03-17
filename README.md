@@ -11,7 +11,7 @@ Flappy dot. KU Computer Programming II Homework.
 
 # Installation
 1. Clone this repository into your local computer
-2. Start game by run `python3 run.py`
+2. Start game by running `python3 run.py`
 
 # Complatibility
 ### Tested on these OS and Python Version
