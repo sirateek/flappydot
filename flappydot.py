@@ -235,24 +235,24 @@ class FlappyGame(GameApp):
     def spacebar_stop(self):
         self.spacebar_status = False
 
-    def spaceon(self):
+    def space_on(self):
         if not self.spacebar_status:
             return
         self.spacebar = Title(
             self, "images/intro/spacebar0.png", CANVAS_WIDTH//2, CANVAS_HEIGHT - CANVAS_HEIGHT*0.15)
         self.spacebar.render()
-        self.after(800, self.spaceoff)
+        self.after(800, self.space_off)
 
-    def spaceoff(self):
+    def space_off(self):
         if not self.spacebar_status:
             return
         self.spacebar = Title(
             self, "images/intro/spacebar1.png", CANVAS_WIDTH//2, CANVAS_HEIGHT - CANVAS_HEIGHT*0.15)
         self.spacebar.render()
-        self.after(100, self.spaceon)
+        self.after(100, self.space_on)
 
     def spacebar_loop(self):
-        self.spaceon()
+        self.space_on()
 
     def delete_spacebar(self):
         self.canvas.delete(f"{self.spacebar.canvas_object_id}")
