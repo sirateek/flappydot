@@ -173,7 +173,7 @@ class Title(TextImage):
 
     def move_out(self):
         if self.y < CANVAS_HEIGHT*2:
-            self.y += 4
+            self.y += 10
 
     def done(self):
         self.status = True
@@ -226,10 +226,12 @@ class FlappyGame(GameApp):
     def move_out_title(self):
         if self.title.y > CANVAS_HEIGHT*1.5:
             self.title.status = True
+            self.title.is_done = True
             return
+        self.title.is_done = False
         self.title.move_out()
         self.title.render()
-        self.after(10, self.move_out_title)
+        self.after(1, self.move_out_title)
 
     def spacebar_start(self):
         self.spacebar_status = True
