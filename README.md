@@ -22,3 +22,17 @@ Flappy dot. KU Computer Programming II Homework.
 
 ### This game is depended on this 3rd party library
 - [Pillow](https://github.com/python-pillow/Pillow)
+
+The game launcher (`run.py`) will automatically check if the Pillow is available to be imported. If not it will ask the user to install it.
+
+> Note: **If no `Pillow`, The game can't be launched** since it is needed to implement bird physical movement.
+
+To install it manually. Use
+```bash
+python3 -m pip install --upgrade Pillow
+```
+or
+```bash
+pip3 install --upgrade Pillow
+```
+
