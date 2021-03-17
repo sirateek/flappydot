@@ -167,7 +167,7 @@ class Title(TextImage):
         self.is_done = False
 
     def move_in(self):
-        if self.y < CANVAS_HEIGHT//2:
+        if self.y < CANVAS_HEIGHT*0.25:
             self.y += 2
 
     def move_out(self):
@@ -181,7 +181,7 @@ class Title(TextImage):
 class FlappyGame(GameApp):
     def create_title(self):
         self.title = Title(
-            self, "images/intro/title.png", CANVAS_WIDTH//2, -CANVAS_HEIGHT//1.5)
+            self, "images/intro/title.png", CANVAS_WIDTH//2, 0-CANVAS_HEIGHT*0.1)
 
     def add_score(self):
         self.score += SCORE_PER_PIPE
@@ -267,7 +267,7 @@ class FlappyGame(GameApp):
         self.spacebar_loop()
 
     def move_in_title(self):
-        if self.title.y == CANVAS_HEIGHT//2:
+        if self.title.y == CANVAS_HEIGHT*0.25:
             self.title.is_done = True
             self.press_spacebar_start()
             return
@@ -283,24 +283,18 @@ class FlappyGame(GameApp):
     def init_game(self):
         self.create_background()
         self.score = 0
-        self.displayed_score()
+        self.create_title()
+        self.spacebar_status = True
+        self.intro = True
+        self.move_in_title()
         self.create_sprites()
-        for element in self.elements[1:]:
-            element.random_height()
         self.is_started = False
         self.is_gameover = False
         self.pipe_refresh_rate = INIT_PIPE_REFRESH_RATE
         self.pipe_speed = INIT_PIPE_SPEED
         self.update_pipe()
-        if self.intro:
+        if self.title.is_done:
             self.press_spacebar_start()
-
-    def start_title(self):
-        self.create_title()
-        self.spacebar_status = True
-        if not self.title.status:
-            self.move_in_title()
-        self.intro = True
 
     def update_pipe(self):
         if self.is_started:
@@ -362,6 +356,7 @@ class FlappyGame(GameApp):
                 self.move_out_title()
             if not self.is_started and not self.is_gameover and self.title.status:
                 self.create_pillar()
+                self.displayed_score()
                 self.is_started = True
                 self.background.start()
                 self.dot.start()
