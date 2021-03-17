@@ -2,3 +2,7 @@ __pycache__
 
 # .DS_Store
 *.DS_Store
+
+# Ignore output from the compilling of PIL
+*.pyc
+*.so

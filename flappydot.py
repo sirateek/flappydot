@@ -1,11 +1,11 @@
 from gamelib import Sprite, GameApp, Text
-from PIL import Image, ImageTk
 import tkinter as tk
 import random
+if __name__ != "__main__":
+    from PIL import Image, ImageTk
 
-
-CANVAS_WIDTH = 1200
-CANVAS_HEIGHT = 500
+CANVAS_WIDTH = None
+CANVAS_HEIGHT = None
 
 GRAVITY = 0.7
 JUMP_VELOCITY = -10
@@ -202,6 +202,11 @@ class FlappyGame(GameApp):
                 self.pipe_refresh_rate -= PIPE_REFRESH_RATE_STEP
 
     def init_game(self):
+        # For updating the CANVAS_HEIGHT and CANVAS_WIDTH in the global scope.
+        global CANVAS_HEIGHT, CANVAS_WIDTH
+        CANVAS_WIDTH = self.canvas_width
+        CANVAS_HEIGHT = self.canvas_height
+
         self.create_background()
         self.score = 0
         self.displayed_score()
@@ -289,11 +294,4 @@ class FlappyGame(GameApp):
 
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    root.title("Monkey Banana Game")
-
-    # do not allow window resizing
-    root.resizable(False, False)
-    app = FlappyGame(root, CANVAS_WIDTH, CANVAS_HEIGHT, UPDATE_DELAY)
-    app.start()
-    root.mainloop()
+    print("Please run this game from the launcher `run.py`")
