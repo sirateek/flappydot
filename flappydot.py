@@ -372,7 +372,8 @@ class FlappyGame(GameApp):
                 self.move_out_title()
             if not self.is_started and not self.is_gameover and self.title.status:
                 self.displayed_score()
-                self.create_sprites()
+                if len(self.elements) == 0:
+                    self.create_sprites()
                 self.create_pillar()
                 self.is_started = True
                 for background in self.background_list:
@@ -392,7 +393,7 @@ class FlappyGame(GameApp):
                 self.canvas.delete(item.canvas_object_id)
             self.elements = []
             self.init_game()
-
+            self.create_sprites()
             return
 
 
