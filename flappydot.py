@@ -168,7 +168,7 @@ class Title(TextImage):
         self.is_done = False
 
     def move_in(self):
-        if self.y < CANVAS_HEIGHT*0.25:
+        if self.y <= CANVAS_HEIGHT*0.25:
             self.y += 2
 
     def move_out(self):
