@@ -3,7 +3,7 @@ import tkinter as tk
 import sys
 
 CANVAS_WIDTH = 1200
-CANVAS_HEIGHT = 500
+CANVAS_HEIGHT = 600
 
 
 def announce(icon, messages, prefix=""):

@@ -7,9 +7,7 @@ class GameCanvasElement():
         self.x = x
         self.y = y
         self.canvas = game_app.canvas
-
         self.is_visible = True
-
         self.init_canvas_object()
         self.init_element()
 
@@ -73,13 +71,11 @@ class GameApp(ttk.Frame):
         self.canvas_height = canvas_height
 
         self.update_delay = update_delay
-
+        self.intro = False
         self.grid(sticky="news")
         self.create_canvas()
-
         self.elements = []
         self.init_game()
-
         self.parent.bind('<KeyPress>', self.on_key_pressed)
         self.parent.bind('<KeyRelease>', self.on_key_released)
 
