@@ -326,6 +326,8 @@ class FlappyGame(GameApp):
         if self.is_started or self.is_gameover:
             self.dot.update()
             self.dot.render()
+            self.dot.update()
+            self.dot.render()
         self.after(10, self.update_bird)
 
     def start(self):
