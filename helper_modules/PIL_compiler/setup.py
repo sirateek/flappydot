@@ -120,7 +120,7 @@ _LIB_IMAGING = (
     "codec_fd",
 )
 
-DEBUG = False
+DEBUG = True
 
 
 class DependencyException(Exception):
@@ -208,6 +208,8 @@ def _add_directory(path, subdir, where=None):
 
 
 def _find_include_file(self, include):
+    self.compiler.include_dirs.append(
+        os.getcwd() + "/helper_modules/PIL_compiler/src")
     for directory in self.compiler.include_dirs:
         _dbg("Checking for include file %s in %s", (include, directory))
         if os.path.isfile(os.path.join(directory, include)):
