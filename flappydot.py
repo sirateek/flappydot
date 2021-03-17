@@ -225,7 +225,6 @@ class FlappyGame(GameApp):
             self.title.status = True
             self.title.is_done = True
             return
-        self.title.is_done = False
         self.title.move_out()
         self.title.render()
         self.after(1, self.move_out_title)
@@ -356,7 +355,7 @@ class FlappyGame(GameApp):
                 element.random_height()
 
     def on_key_pressed(self, event):
-        if event.keysym == "space":
+        if event.keysym == "space" and self.title.is_done:
             if not self.title.status:
                 self.move_out_title()
                 self.delete_spacebar()
